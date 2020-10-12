@@ -7,7 +7,8 @@ from nltk.corpus import stopwords
 from string import punctuation
 from collections import Counter
 import os
-
+import re
+from unidecode import unidecode
 #run this when importing nltk for the first time
 # nltk.download()
 """
@@ -37,13 +38,16 @@ class WebScraper:
     def parseContent(self):
         self.content = list(self.soup.find_all('p'))
         self.words = []
+        self.lines = []
         for p_tag in self.content:
             splitWords = p_tag.string
             if splitWords is None:
                 continue
-            splitWords = str(splitWords).split(' ')
-            for word in splitWords:
-                self.words.append(word)
+            splitWords = str(splitWords).replace(';','.')
+            splitWords = str(splitWords).split('.')
+            # splitWords = splitWords.split('.;')
+            for line in splitWords:
+                self.lines.append(line)
 
     
 
@@ -52,7 +56,8 @@ class WebScraper:
         # while len(self.words) < 2704:
         #     self.words.append("")
         # self.wordMatrix = np.array(self.words).reshape((52, 52))
-        self.wordMatrix = np.array(self.words)
+        # self.wordMatrix = np.array(self.lines)
+        self.wordMatrix = self.lines
     
     def printMatrix(self):
         print(self.wordMatrix)
@@ -69,27 +74,41 @@ class ProcessContent:
         
         self.content = content
         self.clean()
+        
+        self.debugInFile(self.content)
         self.createConcordance()
-        self.saveVocab(os.path.join(os.getcwd(),'SentimentalTrader','src','webscraping','vocab.txt'))
+        # self.saveVocab(os.path.join(os.getcwd(),'SentimentalTrader','src','webscraping','vocab.txt'))
     
     def clean(self):
         #remove punctuation
-        table = str.maketrans('','',punctuation + "'")
-        self.content = [word.translate(table) for word in self.content]
+        table = str.maketrans('','',punctuation + "1234567890")
+
+        self.content = [unidecode(word).translate(table).strip() for word in self.content]
 
         #strip punctuation 
         self.content = [word for word in self.content if not word in punctuation]
 
         #strip meaningless words
-        self.content = [word for word in self.content if len(word) > 3]
+        self.content = [word for word in self.content if len(word) > 2]
+
+        self.content = [word.lower() for word in self.content]
+
+        
+        stopWords = set(stopwords.words('english'))
 
         #strip stopwords
-        stopWords = set(stopwords.words('english'))
-        self.content = [word for word in self.content if not word in stopWords]
+        newContent = []
+        for line in self.content:
+            lines = []
+            for word in line.split():
+                if word not in stopWords:
+                    lines.append(word)
 
-        #strip numbers 
-        #can we train based on pos/neg numbers --> this may not be needed
-        # self.content = np.array([word for word in self.content if word.isalpha()])
+            newContent.append(" ".join(lines))
+
+        self.content = newContent
+
+
       
 
     def createConcordance(self):
@@ -109,16 +128,26 @@ class ProcessContent:
     def getTokens(self):
         return self.content
 
+    def debugInFile(self, content):
+        file = open(os.path.join(os.getcwd(), 'SentimentalTrader', 'src', 'webscraping', 'debugFile.txt'), 'w+')
+        for line in content:
+            file.write(line + '\n')
+
+
     
         
 
 session = requests.Session()
 #works
-ws = WebScraper(session, "https://finance.yahoo.com/news/lawsuits-filed-against-uco-nnox-143500447.html")
+# ws = WebScraper(session, "https://finance.yahoo.com/news/lawsuits-filed-against-uco-nnox-143500447.html")
 
 #works
-# ws = WebScraper(session, "https://www.fool.com/investing/2020/10/03/why-peloton-stock-soared-29-in-september/?source=eptyholnk0000202&utm_source=yahoo-host&utm_medium=feed&utm_campaign=article&yptr=yahoo")
+# ws = WebScraper(session, "https://finance.yahoo.com/news/stock-market-news-live-october-12-2020-113806066.html")
+ws = WebScraper(session, "https://www.cnn.com/2020/10/12/tech/microsoft-election-ransomware/index.html")
 # ws.printMatrix()
+
+
+
 
 pc  = ProcessContent(ws.getContent())
 print(pc.getTokens())
