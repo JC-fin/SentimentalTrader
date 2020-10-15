@@ -15,10 +15,12 @@ def gen_train_test (tickers, test_time=None, interval="1day", numpoints=10, nums
     for ticker in tickers:
         stock_data = td.time_series(tickers=[ticker], interval=interval,
             outputSize=(1+numpoints) * numsets, end_date=test_time)
+        print(stock_data)
         test_rest = np.array(stock_data.iloc[stock_data.index % (numpoints + 1) != 0][['open', 'high', 'low', 'close', 'volume']])
         test_rest = test_rest.reshape((numsets, numpoints, 5))
         #Pure closing values
         test_closing = np.array(stock_data.iloc[stock_data.index % (numpoints + 1) == 0]['close'])
+        print(test_closing)
         #Percent change of closing values
         test_closing = test_closing / np.array(stock_data.iloc[stock_data.index % (numpoints + 1) == 1]['close'])
         X = np.concatenate([X, test_rest])
@@ -56,3 +58,4 @@ def train_model():
     while predict[0] == 0:
           predict = model.predict(X_test)
     print (predict)
+gen_train_test(['MSFT'])
