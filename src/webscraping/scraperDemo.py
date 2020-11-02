@@ -11,6 +11,8 @@ import re
 from unidecode import unidecode
 from urllib.request import Request, urlopen
 from selenium import webdriver
+from GoogleNews import GoogleNews
+
 #run this when importing nltk for the first time
 # nltk.download()
 """
@@ -83,7 +85,14 @@ class WebScraper:
 
         self.parseContent()
         self.loadIntoNumpyArray()
-        
+
+    def getTitles(self, ticker, start, end):
+        googlenews = GoogleNews(start=start, end=end)
+        googlenews.search(ticker)
+        result = googlenews.result()
+        df = pd.DataFrame(result)
+
+        return df['title']
     
     def parseContent(self):
 
@@ -269,7 +278,7 @@ session = requests.Session()
 # ws = WebScraper(session, "test", "https://finance.yahoo.com/news/lawsuits-filed-against-uco-nnox-143500447.html")
 
 #works no ticker
-ws = WebScraper(session, 1, "https://finance.yahoo.com/news/stock-market-news-live-october-12-2020-113806066.html", 'TestCO')
+# ws = WebScraper(session, 1, "https://finance.yahoo.com/news/stock-market-news-live-october-12-2020-113806066.html", 'TestCO')
 # ws = WebScraper(session, "test", "https://www.investors.com/market-trend/stock-market-today/dow-jones-up-walmart-microsoft-power-dow-higher-time-to-buy-box/")
 
 # ws = WebScraper(session, 1, "https://www.investors.com/news/technology/workday-earnings-workday-stock-wday-q2-2020/")
@@ -277,10 +286,24 @@ ws = WebScraper(session, 1, "https://finance.yahoo.com/news/stock-market-news-li
 # ws = WebScraper(session, "test", "https://www.investors.com/news/technology/nvidia-stock-soars-data-center-gaming-tailwinds/", 'NVDA')
 
 # ws = WebScraper(session, 1, 'https://www.investors.com/news/nikola-stock-soars-gm-production-partnership-electric-truck-tesla-stock/')
+
+# google docs
+ws = WebScraper(
+    session, 1, "https://docs.google.com/spreadsheets/d/1l7OiTGWbVkTJz6a1ZHALq0jrfJOPh1dUjNITx4w4854/edit#gid=0", 'Docs')
+
+
 pc  = ProcessContent(1, ws.getContent(), ws.getCompanyData())
 
 
 # df = pd.read_csv('/Users/MichaelMoschitto/Desktop/CS/301/SentimentalTrader/src/webscraping/Article List.csv')
+
+
+
+
+
+
+
+
 
 # num = 0
 # for date, row in df.T.iteritems():
