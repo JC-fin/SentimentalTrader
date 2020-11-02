@@ -10,13 +10,13 @@ class LSTM :
     def __init__(self, ticker):
         self.ticker = ticker
         self.trainer = Trainer(ticker)
-        self.trainer.generateTrainData(30)
-        self.trainer.generateTestData(30)
+        self.trainer.generateTrainData(10)
+        self.trainer.generateTestData(10)
 
         self.model = tf.keras.Sequential()
-        self.model.add(tf.keras.layers.LSTM(20, input_shape=(30, 5), return_sequences=True))
+        self.model.add(tf.keras.layers.LSTM(20, input_shape=(10, 3), return_sequences=True))
         self.model.add(tf.keras.layers.LSTM(20))
-        self.model.add(tf.keras.layers.Dense(1, activation=tf.nn.tanh))
+        self.model.add(tf.keras.layers.Dense(1, activation=LeakyReLU(alpha=0.3)))
         #self.model.add(LeakyReLU(alpha=0.3)) tf.nn.tanh
         self.model.compile(optimizer='adam', loss='mean_squared_error')
     
@@ -46,5 +46,5 @@ class LSTM :
 
 msft = LSTM("MSFT")
 msft.trainModel()
-#msft.evaluateModel()
+msft.evaluateModel()
 msft.testModel()
