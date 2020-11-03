@@ -12,6 +12,7 @@ from unidecode import unidecode
 from urllib.request import Request, urlopen
 from selenium import webdriver
 from GoogleNews import GoogleNews
+import datetime
 
 
 class titleScraper:
@@ -136,11 +137,9 @@ class titleScraper:
         Function: Extends date by <extension>
         """
 
-        newEnd = date.split('/')
-        days = int(newEnd[1])
-        days += extension
-        newEnd[1] = str(days)
-        return '/'.join(newEnd)
+        d = datetime.datetime.strptime(date, "%m/%d/%Y")
+        d = d + datetime.timedelta(days=extension)
+        return d.strftime("%m/%d/%Y")
 
     
     def getTicker(self):
@@ -188,7 +187,8 @@ class titleScraper:
 # ts = titleScraper('MSFT', 'Microsoft', '10/10/2020', '10/10/2020', 10)
 # ts.main()
 
-ts = titleScraper('PTON', 'Peloton', '10/10/2020', '10/10/2020', 20)
+ts = titleScraper('PTON', 'Peloton', '10/10/2010', '10/10/2010', 200)
+
 ts.main()
 # print(ts.getTitleList())
 # ts.outputScrape()
