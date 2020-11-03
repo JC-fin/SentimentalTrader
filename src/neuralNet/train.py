@@ -83,6 +83,7 @@ tokenizer.fit_on_texts(train_docs)
 encoded_docs = tokenizer.texts_to_sequences(train_docs)
 # pad sequences
 max_length = max([len(s.split()) for s in train_docs])
+print('maxLength: ' + str(max_length))
 Xtrain = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
 # define training labels
 ytrain = array([0 for _ in range(504)] + [1 for _ in range(1263)])# + [0.5 for _ in range(2779)])
@@ -115,7 +116,7 @@ print(model.summary())
 # compile network
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 # fit network
-model.fit(Xtrain, ytrain, epochs=10, verbose=2)
+model.fit(Xtrain, ytrain, epochs=100, verbose=2)
 # evaluate
 loss, acc = model.evaluate(Xtest, ytest, verbose=0)
 print('Test Accuracy: %f' % (acc*100))

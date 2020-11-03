@@ -73,7 +73,7 @@ vocab = Counter()
 # add all docs to vocab
 process_docs('../../data/finData/neg', vocab, True)
 process_docs('../../data/finData/pos', vocab, True)
-process_docs('../../data/finData/neu', vocab, True)
+# process_docs('../../data/finData/neu', vocab, True)
 # print the size of the vocab
 print(len(vocab))
 # print the top words in the vocab
