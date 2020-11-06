@@ -101,21 +101,21 @@ class SentimentTrainer:
         # define model
         self.model = Sequential()
         self.model.add(Embedding(vocab_size, 100, input_length=self.max_length))
-        self.model.add(Conv1D(filters=128, kernel_size=8, activation='relu'))
+        self.model.add(Conv1D(filters=128, kernel_size=5, activation='relu'))
         self.model.add(MaxPooling1D(pool_size=2))
         self.model.add(Flatten())
-        self.model.add(Dense(10, activation='relu'))
+        self.model.add(Dense(16, activation='relu'))
         self.model.add(Dense(1, activation='sigmoid'))
         print(self.model.summary())
 
         # compile network
-        self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        self.model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy', 'Precision'])
         # fit network
-        self.model.fit(Xtrain, ytrain, epochs=10, verbose=2)
+        self.model.fit(Xtrain, ytrain, epochs=50, batch_size=50, verbose=2)
         # evaluate
-        loss, acc = self.model.evaluate(Xtest, ytest, verbose=0)
+        loss, acc, prec = self.model.evaluate(Xtest, ytest, verbose=0)
         print('Test Accuracy: %f' % (acc*100))
+        print('Precision: %f' % (prec*100))
 
         # save the model to be used to predict
         self.model.save('my_model')
- 
