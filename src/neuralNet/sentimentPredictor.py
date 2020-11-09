@@ -5,17 +5,19 @@ from keras.preprocessing.text import Tokenizer
 import numpy as np
 import pandas as pd
 from os import listdir
+import os
 import re
-from sentimentTrainer import SentimentTrainer
-from dataLoader import DataLoader
+from neuralNet.sentimentTrainer import SentimentTrainer
+from neuralNet.dataLoader import DataLoader
 
 class SentimentPredictor:
     def __init__(self, vocab):
-        self.model = keras.models.load_model('my_model')
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        self.model = keras.models.load_model(filepath + '/my_model')
         self.tokenizer = Tokenizer()
         self.vocab = vocab
-        self.tokenizer.fit_on_texts(SentimentTrainer.process_docs('../../data/finData/neg/', self.vocab, True) + 
-            SentimentTrainer.process_docs('../../data/finData/pos/', self.vocab, True))
+        self.tokenizer.fit_on_texts(SentimentTrainer.process_docs(filepath + '/../../data/finData/neg/', self.vocab, True) + 
+            SentimentTrainer.process_docs(filepath + '/../../data/finData/pos/', self.vocab, True))
 
 
     def predict(self, row):

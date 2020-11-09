@@ -76,8 +76,8 @@ class DataLoader:
     def load_vocab(self, neg_path, pos_path):
         self.vocab = Counter()
         # add all docs to vocab
-        self.process_docs('../../data/finData/neg', self.vocab, True)
-        self.process_docs('../../data/finData/pos', self.vocab, True)
+        self.process_docs(neg_path, self.vocab, True)
+        self.process_docs(pos_path, self.vocab, True)
         # process_docs('../../data/finData/neu', vocab, True)
         
         min_occurance = 1

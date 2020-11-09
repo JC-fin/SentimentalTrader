@@ -10,7 +10,7 @@ from keras.layers import Embedding
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 import re
-from dataLoader import DataLoader
+from neuralNet.dataLoader import DataLoader
 
 class SentimentTrainer:
     def __init__ (self, vocab):
