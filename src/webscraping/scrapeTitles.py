@@ -70,17 +70,17 @@ class titleScraper:
             df = pd.DataFrame(result)
 
             self.titleList = df['title'].tolist()
-            self.clean()
-            self.stripTitleList()
+            # self.clean()
+            # self.stripTitleList()
             found += len(self.titleList)
 
             for t in self.titleList:
                 titles.append((t))
             
             start = end
-            end = self.extendDate(end, 2)
+            # end = self.extendDate(end, 2)
 
-        self.titleList = titles
+        self.titleList = titles[:num]
         self.end = end
 
 
@@ -156,7 +156,7 @@ class titleScraper:
 
     def outputScrape(self):
 
-        scrapesDir = os.getcwd() + '/SentimentalTrader/src/webscraping/' + 'Scrapes'
+        scrapesDir = os.path.dirname(os.path.abspath(__file__)) + '/Scrapes'
 
         if not os.path.exists(scrapesDir):
             os.mkdir(scrapesDir)
@@ -187,9 +187,9 @@ class titleScraper:
 # ts = titleScraper('MSFT', 'Microsoft', '10/10/2020', '10/10/2020', 10)
 # ts.main()
 
-ts = titleScraper('PTON', 'Peloton', '10/10/2010', '10/10/2010', 200)
+# ts = titleScraper('PTON', 'Peloton', '10/10/2010', '10/10/2010', 200)
 
-ts.main()
+# ts.main()
 # print(ts.getTitleList())
 # ts.outputScrape()
 # ts.clean()

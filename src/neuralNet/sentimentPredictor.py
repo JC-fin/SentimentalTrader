@@ -26,6 +26,8 @@ class SentimentPredictor:
         print(seqs)
         seqs = self.tokenizer.texts_to_sequences(seqs)
         print(seqs)
+        if len(seqs[0]) < 3:
+            return np.nan
         seqs = pad_sequences(seqs, maxlen=31, padding='post') #maxlen from training data
         return self.model.predict(seqs)
 
