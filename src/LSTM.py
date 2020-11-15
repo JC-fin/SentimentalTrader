@@ -10,20 +10,21 @@ class LSTM :
     def __init__(self, ticker):
         self.ticker = ticker
         self.trainer = Trainer(ticker)
-        self.trainer.generateTrainData(30)
-        self.trainer.generateTestData(30)
+        self.trainer.generateTrainData(20)
+        self.trainer.generateTestData(20)
 
         self.model = tf.keras.Sequential()
-        self.model.add(tf.keras.layers.LSTM(20, input_shape=(30, 5), return_sequences=True))
+        self.model.add(tf.keras.layers.LSTM(20, input_shape=(20, 2), return_sequences=True))
         self.model.add(tf.keras.layers.LSTM(20))
-        self.model.add(tf.keras.layers.Dense(1, activation=tf.nn.tanh))
+        self.model.add(tf.keras.layers.Dense(2, activation='softmax'))
         #self.model.add(LeakyReLU(alpha=0.3)) tf.nn.tanh
-        self.model.compile(optimizer='adam', loss='mean_squared_error')
+        self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     
     def trainModel(self):
-        print(self.trainer.Y_train)
-        print(self.trainer.X_train)
-        self.model.fit(self.trainer.X_train, self.trainer.Y_train, epochs=100)
+        self.model.fit(self.trainer.X_train, self.trainer.Y_train, epochs=50)
+    
+    def predict(self, x_data):
+        return self.model.predict(x_data)
     
     def evaluateModel(self):
         print(self.model.evaluate(self.trainer.X_test, self.trainer.Y_test))
@@ -43,8 +44,24 @@ class LSTM :
         plt.xlabel('Actual')
         plt.legend()
         plt.show()
+    
+    def movementPrediction(self):
+        predicted = self.model.predict(self.trainer.X_test)
+        right = 0
+        for i in range(len(predicted)):
+            expected = self.trainer.Y_test[i]
+            if (expected[0] and predicted[i][0] > 0.5) :
+                right += 1
+            if (expected[1] and predicted[i][1] > 0.5) :
+                right += 1
+        print(right / len(predicted))
 
-msft = LSTM("MSFT")
-msft.trainModel()
-#msft.evaluateModel()
-msft.testModel()
+    def extractFeatures(self, data):
+        return data
+
+if __name__ == '__main__':
+    msft = LSTM("MSFT")
+    msft.trainModel()
+    msft.evaluateModel()
+    msft.movementPrediction()
+    #msft.testModel()
