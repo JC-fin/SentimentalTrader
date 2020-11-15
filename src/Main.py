@@ -63,15 +63,14 @@ def main():
     meanPred = df.groupby('Ticker')['Prediction'].apply(mean).rename('mean')
     medianPred = df.groupby('Ticker')['Prediction'].apply(median).rename('median')
     
-    qty = medianPred.apply(lambda pred: int(abs(0.5 - pred) * 100))
-
     trader = TradingBot(tickers.keys())
     predictions = trader.analyzeStocks()
     for ticker in predictions.keys():
-        if predictions[ticker] > 0:
-            trader.buy(ticker, qty.loc[ticker])
+        result = (predictions[ticker] + medianPred[ticker]) / 2
+        if result > 0.5:
+            trader.buy(ticker, int(abs(0.5 - result) * 20))
         else:
-            trader.sell(ticker, qty.loc[ticker])
+            trader.sell(ticker, int(abs(0.5 - result) * 20))
 
 if __name__ == "__main__":
     main()
