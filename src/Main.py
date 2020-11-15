@@ -3,17 +3,10 @@ from neuralNet.sentimentTrainer import SentimentTrainer
 from neuralNet.dataLoader import DataLoader
 from neuralNet.sentimentPredictor import SentimentPredictor
 from webscraping.scrapeTitles import titleScraper
+from datetime import date
+from datetime import timedelta
 import pandas as pd
 import numpy as np
-
-def mean(arrs):
-        sum = 0
-        total = 0
-        for arr in arrs:
-            if not np.isnan(arr):
-                sum += arr
-                total += 1
-        return sum / total
 
 def median(arrs):
     arrs.dropna(inplace=True)
@@ -43,9 +36,10 @@ def main():
     df = pd.DataFrame(columns=['Date', 'Ticker', 'Headline'])
 
     for key in tickers:
-        ts = titleScraper(key, tickers[key],  "11/04/2020", "11/05/2020", 20)
+        # get 20 titles for each ticker in tickers from the last 3 days
+        ts = titleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 20)
         ts.main()
-        frame = pd.DataFrame({'Date': pd.Series(["11/05/2020"]).repeat(len(ts.getTitleList())),
+        frame = pd.DataFrame({'Date': pd.Series([date.today().strftime('%m/%d/%Y')]).repeat(len(ts.getTitleList())),
         'Ticker': pd.Series(key).repeat(len(ts.getTitleList())),
         'Headline': ts.getTitleList()})
         df = df.append(frame, ignore_index=True)
@@ -60,7 +54,6 @@ def main():
     sp = SentimentPredictor(dl.vocab)
     sp.predict_sentiment(df)
 
-    meanPred = df.groupby('Ticker')['Prediction'].apply(mean).rename('mean')
     medianPred = df.groupby('Ticker')['Prediction'].apply(median).rename('median')
     
     trader = TradingBot(tickers.keys())
