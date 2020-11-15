@@ -17,7 +17,7 @@ class Trade_Visualizer:
     # Given a ticker, date, and either 'buy', 'sell', or 'np.nan' indicating
     # buy/sell, create a record containing the info in the class dict
     def add_trade(self, ticker, date, buy):
-        date = str(date)
+        date = str(date.date())
         ticker = ticker.lower()
         if ticker in self.trade_history:
             date_index = self.has_date(ticker, date)
@@ -32,7 +32,7 @@ class Trade_Visualizer:
     # Given a ticker, date, stock price, and boolean indicating
     # buy/sell, create a record containing the info in the class dict
     def add_pred(self, ticker, date, price):
-        date = str(date)
+        date = str(date.date())
         ticker = ticker.lower()
         if ticker in self.trade_history:
             date_index = self.has_date(ticker, date)
@@ -47,7 +47,7 @@ class Trade_Visualizer:
     # Given a ticker, date, stock price, create a record containing the
     # info in the class dict
     def add_actual(self, ticker, date, price):
-        date = str(date)
+        date = str(date.date())
         ticker = ticker.lower()
         if ticker in self.trade_history:
             date_index = self.has_date(ticker, date)
@@ -65,7 +65,7 @@ class Trade_Visualizer:
     def plot_pred_vs_act(self):
         for key in self.trade_history.keys():
             df = pd.DataFrame(self.trade_history[key], columns=['date', 'act', 'pred', 'buy'])
-            df['date'] = df['date'].apply((lambda x : datetime.strptime(x, '%Y-%m-%d %H:%M:%S')))
+            df['date'] = df['date'].apply((lambda x : datetime.strptime(x, '%Y-%m-%d')))
             df = df.set_index('date')
             df.sort_index(inplace=True)
             pred_vs_act = df[['act', 'pred']]
@@ -77,7 +77,6 @@ class Trade_Visualizer:
             ax.set_ylabel('Price')
             ax.set_title(key + " Prediction History")
             ax.legend()
-            plt.locator_params(axis='x', nbins=6)
             plt.savefig(self.visuals_path + key + '_prediction.png')
     
     # Creates plots for each company and saves them to the visualization 
@@ -85,7 +84,7 @@ class Trade_Visualizer:
     def plot_buy_sell(self):
         for key in self.trade_history.keys():
             df = pd.DataFrame(self.trade_history[key], columns=['date', 'act', 'pred', 'buy'])
-            df['date'] = df['date'].apply((lambda x : datetime.strptime(x, '%Y-%m-%d %H:%M:%S')))
+            df['date'] = df['date'].apply((lambda x : datetime.strptime(x, '%Y-%m-%d')))
             df = df.set_index('date')
             df.sort_index(inplace=True)
             min_buy_index = df.loc[np.vectorize(pd.isna)(df['buy'])].sort_index().iloc[0].name
@@ -102,7 +101,6 @@ class Trade_Visualizer:
             ax.set_ylabel('Price')
             ax.set_title(key + " Buy Sell History")
             ax.legend()
-            plt.locator_params(axis='x', nbins=6)
             plt.savefig(self.visuals_path + key + '_buysell.png')
             
     # Reads the json file located at the given path and returns
@@ -128,6 +126,23 @@ class Trade_Visualizer:
             if self.trade_history[ticker][i][0] == date:
                 return i
         return -1
+   
+    # Loads missing closing prices and predictions from the last stored closing price and
+    # prediction to the most current closing price and predictions
+    #def update(self, tickers):
+        
+
+    # Load today's prices closing prices into dictionary
+
+
+    # Load tomorrow's predictions into dictionary
+
+
+
+
+
+
+    
 
 
 
