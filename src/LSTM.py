@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 class LSTM :
     def __init__(self, ticker):
-        self.ticker = ticker
+        self.ticker = ticker 
         self.trainer = Trainer(ticker)
         self.trainer.generateTrainData(20)
         self.trainer.generateTestData(20)
