@@ -14,7 +14,7 @@ class TwelveDataWrapper:
     def time_series(self, tickers, interval="15min", outputSize=None,
         start_date=None, end_date=None, _format='CSV'):
         symbols = ",".join(tickers)
-        url = ("https://api.twelvedata.com/time_series?symbol=%s&interval=%s&apikey=%s&format=%s"
+        url = ("https://api.twelvedata.com/time_series?symbol=%s&interval=%s&apikey=%s&format=%s&order=ASC"
             % (symbols, interval, self.key, _format))
 
         if start_date is not None:
