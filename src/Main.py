@@ -38,8 +38,8 @@ def main():
     df = pd.DataFrame(columns=['Date', 'Ticker', 'Headline'])
 
     for key in tickers:
-        # get 20 titles for each ticker in tickers from the last 3 days
-        ts = titleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 25)
+        # get 20 titles for each ticker in tickers from the last 2 days
+        ts = titleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 50)
         ts.main()
         frame = pd.DataFrame({'Date': pd.Series([date.today().strftime('%m/%d/%Y')]).repeat(len(ts.getTitleList())),
         'Ticker': pd.Series(key).repeat(len(ts.getTitleList())),

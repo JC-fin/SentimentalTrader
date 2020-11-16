@@ -64,16 +64,13 @@ class titleScraper:
         end = self.end
         start = self.start
 
-        # sometimes calling the api again will get more data
+        # max start can be reduced by is 7 days
         tries = 0
 
         while found <= num:
 
-            if not self.validDates():
-                if tries < 2:
-                    end = datetime.date.today()
-                else:
-                    break
+            if not self.validDates() or tries > 7:
+                break
         
 
             googlenews = GoogleNews(start=start, end=end)
@@ -88,22 +85,18 @@ class titleScraper:
 
             self.clean()
             self.stripTitleList()
-            found += len(self.titleList)
+            
 
             for t in self.titleList:
                 if t not in titles:
                     titles.append((t))
+                    found += 1
             
-            start = end
-            end = self.extendDate(end, 1)
-
-            if self.validDates(end):
-                self.end = end
-
-        
+            start = self.reduceDate(start, 1)
+            
             tries += 1
            
-
+        self.start = start
         self.titleList = titles[:num]
 
 
@@ -152,19 +145,19 @@ class titleScraper:
 
         self.titleList = newList
 
-    def extendDate(self, date, extension):
+    def reduceDate(self, date, reduction):
         """
         Input: 
         
         date --> date to extend
 
-        extension --> number of days to extend date by 
+        reduction --> number of days to extend date by 
 
-        Function: Extends date by <extension>
+        Function: Extends date by <reduction>
         """
 
         d = datetime.datetime.strptime(date, "%m/%d/%Y")
-        d = d + datetime.timedelta(days=extension)
+        d = d - datetime.timedelta(days=reduction)
         return d.strftime("%m/%d/%Y")
 
     def validDates(self, date=None):
@@ -234,7 +227,8 @@ class titleScraper:
 
 # ts.main()
 
-# ts = titleScraper('PTON', 'Peloton', '10/10/2010', '10/10/2010', 200)
+# ts = titleScraper('PTON', 'Peloton', '11/15/2020', '10/10/2010', 100)
+
 
 # ts.main()
 # print(ts.getTitleList())
