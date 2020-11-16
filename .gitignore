@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 #sentiment dataset
-/data/findata
+./data/findata

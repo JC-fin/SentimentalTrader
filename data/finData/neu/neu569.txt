@@ -1,0 +1,1 @@
+`` As defences mature , attackers develop Trojans that are equipped with content filters to detect online banking activity for capturing account details using methods such as form grabbing , screen shots , video captures , keylogging and injection of form fields .
