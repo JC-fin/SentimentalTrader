@@ -39,7 +39,7 @@ class LSTMv2:
         self.model.compile(optimizer=optimizers.Adam(lr=0.0005), loss='mse')
 
     def trainModel(self):
-        self.model.fit([self.trainer.X_train, self.trainer.X_technicals], self.trainer.Y_train, epochs=50, shuffle=True, validation_split=0.1, batch_size=32)
+        self.model.fit([self.trainer.X_train, self.trainer.X_technicals], self.trainer.Y_train, epochs=5, shuffle=True, validation_split=0.1, batch_size=32)
 
     def testModel(self, epochs=50):
         trainTestSplit = int(len(self.trainer.raw_data) * 0.80)
@@ -80,14 +80,18 @@ class LSTMv2:
             fp.write("%d,%f\n" % (epochs, f1))
     
     def predictNextDay(self):
-        ohlcv = self.trainer.raw_data[-1 * self.histPoints:]
-        ohlcv = self.trainer.normalizer.transform(ohlcv)
-        ohlcv = ohlcv.reshape(1, self.histPoints, 5)
-        technical = np.array(ohlcv[:,3].mean()).reshape((1, 1))
-        prediction = self.model.predict([ohlcv, technical])
-        return self.trainer.y_normalizer.inverse_transform(prediction)
+        changes = self.trainer.raw_data[-1 * self.histPoints:]
+        changes = np.hstack((self.trainer.normalizer.transform(changes[:, [0]]), changes[:, [1]]))
+        changes = changes.reshape(1, self.histPoints, 2)
+        ema12 = self.trainer.expoMovingAvg(12, len(self.trainer.ohlcv))
+        ema26 = self.trainer.expoMovingAvg(26, len(self.trainer.ohlcv))
+        macd = np.array([ema26 - ema12])
+        prediction = self.model.predict([changes, macd])
+        return prediction
 
 if __name__ == "__main__":
     msft = LSTMv2('MSFT', 30)
-    msft.testModel(epochs=10)
+    msft.trainModel()
+    print(msft.predictNextDay())
+    #msft.testModel(epochs=10)
 
