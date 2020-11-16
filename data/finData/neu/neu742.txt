@@ -1,1 +1,0 @@
-This PC application allows users to copy files and other data from their Nokia mobile device to their computer as well as create backup content .

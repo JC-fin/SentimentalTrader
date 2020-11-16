@@ -1,1 +1,0 @@
-Affecto will provide a new EFI Data Warehouse and reporting solution , behavioural scoring system supporting operational decision processes and Data Migration from old legacy systems to the new EFI system .

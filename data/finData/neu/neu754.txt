@@ -1,1 +1,0 @@
-UNC Charlotte would also deploy SSH Tectia Connector to enable secure application connectivity .

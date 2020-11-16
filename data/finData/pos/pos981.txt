@@ -1,1 +1,0 @@
-Higher bit rates for outgoing traffic improves the end-user experience of mobile broadband services such as video conferencing , file sharing and sending e-mails with attachments .

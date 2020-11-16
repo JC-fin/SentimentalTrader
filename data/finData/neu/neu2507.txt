@@ -1,1 +1,0 @@
-The solution is demonstrated on a tablet developed by Aava Mobile as a multi-window system , which enables the use of several applications simultaneously , for example the viewing of messages and calendar side by side .

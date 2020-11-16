@@ -1,1 +1,0 @@
-When the web user clicks on the link contained in the mail , he finds himself on a bogus site that imitates that of his bank , and which retrieves his personal banking data .
