@@ -33,5 +33,5 @@ class TradingBot:
         predictions = {}
         for ticker in self.tickers:
             model = predictions.get(ticker)
-            predictions[ticker] = predictMovement(ticker, model)
+            predictions[ticker] = self.predictMovement(ticker, model)
         return predictions
