@@ -13,7 +13,7 @@ class TradingBot:
         self.LSTMs = {}
         self.tickers = tickers
         for ticker in tickers:
-            self.LSTMs[ticker] = LSTM(ticker)
+            self.LSTMs[ticker] = LSTMv2(ticker)
             self.LSTMs[ticker].trainModel()
         self.tdw = tdw()
     
