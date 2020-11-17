@@ -31,5 +31,8 @@ class SentimentPredictor:
         return self.model.predict(seqs)
 
     def predict_sentiment(self, dataframe):
-        dataframe['Prediction'] = dataframe.apply(self.predict, axis = 1)
+        def test(x):
+            print(x)
+            return self.predict(x)
+        dataframe['Prediction'] = dataframe.apply(test, axis = 1)
         return dataframe

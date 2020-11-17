@@ -1,5 +1,6 @@
 from string import punctuation
 from os import listdir
+import os
 from numpy import array
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -80,8 +81,9 @@ class SentimentTrainer:
         ytrain = array([0 for _ in range(504)] + [1 for _ in range(1263)])# + [0.5 for _ in range(2779)])
 
         #load all test reviews
-        positive_docs = self.process_docs('../../data/finData/pos', self.vocab, False)
-        negative_docs = self.process_docs('../../data/finData/neg', self.vocab, False)
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        positive_docs = self.process_docs(filepath + '/../../data/finData/pos', self.vocab, False)
+        negative_docs = self.process_docs(filepath + '/../../data/finData/neg', self.vocab, False)
         #neutral_docs = process_docs('../../data/finData/neu', vocab, False)
         
         test_docs = negative_docs + positive_docs# + neutral_docs

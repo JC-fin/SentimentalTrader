@@ -1191,7 +1191,6 @@ reserves
 produce
 starting
 solteq
-microsoft
 dynamics
 blyk
 extended
@@ -1941,7 +1940,6 @@ activeness
 stated
 forestry
 holdings
-xerox
 teamed
 tailor
 shortrun
@@ -3356,7 +3354,6 @@ enhance
 trends
 volunteers
 depot
-hd
 baltimore
 neighborhood
 right
@@ -3838,7 +3835,6 @@ macintosh
 computers
 transferable
 portable
-apple
 ipods
 bold
 spinning
