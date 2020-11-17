@@ -64,13 +64,13 @@ def main():
     trader = TradingBot(tickers.keys())
     predictions = trader.analyzeStocks()
     for ticker in predictions.keys():
-        result = (predictions[ticker] + medianPred[ticker]) / 2
-        print(predictions[ticker])
-        print(int(abs(0.5 - result) * 20))
-        if result > 0.5:
-            trader.buy(ticker, int(abs(0.5 - result) * 20))
+        result = (predictions[ticker] + (medianPred[ticker] - 0.5) * .1)
+        if result > 0:
+            trader.buy(ticker, int(abs(result) * 100))
+        elif result < 0:
+            trader.sell(ticker, int(abs(result) * 100))
         else:
-            trader.sell(ticker, int(abs(0.5 - result) * 20))
+            print("No chang was predicted")
 
 if __name__ == "__main__":
     main()

@@ -3,8 +3,8 @@ from TwelveDataWrapper import TwelveDataWrapper as tdw
 from datetime import date, timedelta
 from LSTMv2 import LSTMv2
 
-KEY_ID = "PKM8TR5SZ1SR1BZ39P6N"
-KEY_SECRET = "v3sXwbjf3b4nrmnJEbc2Sso4AuBBa3BYrM8RiKbN"
+KEY_ID = "PKUSO4DJQOO2NNX17NKG"
+KEY_SECRET = "oS7d1pGVruPH4At5KzZ4ibTagik0Qy0o6ciqsZf5"
 URL = "https://paper-api.alpaca.markets"
 
 class TradingBot:
