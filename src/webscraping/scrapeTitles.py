@@ -15,7 +15,7 @@ from GoogleNews import GoogleNews
 import datetime
 
 
-class titleScraper:
+class TitleScraper:
     def __init__(self, ticker='None', company='None', start='01/01/20', end='01/08/20', num=0):
         '''
         Inputs: 
@@ -228,7 +228,7 @@ class titleScraper:
 
 # ts.main()
 
-# ts = titleScraper('PTON', 'Peloton', '11/15/2020', '10/10/2010', 100)
+# ts = TitleScraper('PTON', 'Peloton', '11/15/2020', '10/10/2010', 100)
 
 
 # ts.main()

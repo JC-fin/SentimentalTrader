@@ -2,11 +2,12 @@ from tradingBot import TradingBot
 from neuralNet.sentimentTrainer import SentimentTrainer
 from neuralNet.dataLoader import DataLoader
 from neuralNet.sentimentPredictor import SentimentPredictor
-from webscraping.scrapeTitles import titleScraper
+from webscraping.scrapeTitles import TitleScraper
 from datetime import date
 from datetime import timedelta
 import pandas as pd
 import numpy as np
+import os
 
 def median(arrs):
     arrs.dropna(inplace=True)
@@ -16,6 +17,10 @@ def median(arrs):
 
 def main():
     train_model = False
+    
+    # # FOR MICHAELS VSCODE
+    # training_data_dir = './data/finData/'
+
     training_data_dir = '../data/finData/'
     # tickers = {
     #     'NKLA' : 'Nikola',
@@ -39,7 +44,7 @@ def main():
 
     for key in tickers:
         # get 20 titles for each ticker in tickers from the last 2 days
-        ts = titleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 50)
+        ts = TitleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 10)
         ts.main()
         frame = pd.DataFrame({'Date': pd.Series([date.today().strftime('%m/%d/%Y')]).repeat(len(ts.getTitleList())),
         'Ticker': pd.Series(key).repeat(len(ts.getTitleList())),
@@ -48,7 +53,8 @@ def main():
 
     
     
-    print(df)
+    # print(df)
+    print(os.path.abspath(training_data_dir))
     dl = DataLoader()
     dl.load_vocab(training_data_dir + 'pos', training_data_dir + 'neg')
 

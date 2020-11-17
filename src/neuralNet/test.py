@@ -3,7 +3,7 @@ from dataLoader import DataLoader
 from sentimentPredictor import SentimentPredictor
 import sys
 sys.path.append("../webscraping/")
-from scrapeTitles import titleScraper
+from scrapeTitles import TitleScraper
 import pandas as pd
 import numpy as np
 
@@ -14,7 +14,7 @@ companies = {'nikola': 'NKLA', 'microsoft': 'MSFT', 'apple': 'AAPL',
 df = pd.DataFrame(columns=['Date', 'Ticker', 'Headline'])
 
 for key in companies:
-    ts = titleScraper(companies[key], key, "11/04/2020", "11/05/2020", 20)
+    ts = TitleScraper(companies[key], key, "11/04/2020", "11/05/2020", 20)
     ts.main()
     frame = pd.DataFrame({'Date': pd.Series(["11/05/2020"]).repeat(len(ts.getTitleList())),
     'Ticker': pd.Series(companies[key]).repeat(len(ts.getTitleList())),
