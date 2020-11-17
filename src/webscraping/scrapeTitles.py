@@ -225,6 +225,7 @@ class titleScraper:
 
 
 
+
 # ts.main()
 
 # ts = titleScraper('PTON', 'Peloton', '11/15/2020', '10/10/2010', 100)
