@@ -16,7 +16,11 @@ def median(arrs):
 
 def main():
     train_model = False
-    training_data_dir = '../data/finData/'
+    scrapes_per_article = 50
+    # ONLY FOR MICHAELS VSCODE
+    training_data_dir = './data/finData/'
+
+    # training_data_dir = '../data/finData/'
     # tickers = {
     #     'NKLA' : 'Nikola',
     #     'MSFT' : 'Microsoft',
@@ -39,7 +43,7 @@ def main():
 
     for key in tickers:
         # get 20 titles for each ticker in tickers from the last 2 days
-        ts = TitleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 50)
+        ts = TitleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), scrapes_per_article)
         ts.main()
         frame = pd.DataFrame({'Date': pd.Series([date.today().strftime('%m/%d/%Y')]).repeat(len(ts.getTitleList())),
         'Ticker': pd.Series(key).repeat(len(ts.getTitleList())),
