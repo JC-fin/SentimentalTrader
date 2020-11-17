@@ -71,6 +71,8 @@ def main():
     predictions = trader.analyzeStocks()
     for ticker in predictions.keys():
         result = (predictions[ticker] + medianPred[ticker]) / 2
+        print(predictions[ticker])
+        print(int(abs(0.5 - result) * 20))
         if result > 0.5:
             trader.buy(ticker, int(abs(0.5 - result) * 20))
         else:
