@@ -30,7 +30,7 @@ class TwelveDataWrapper:
 
     def macd(self,symbol, interval="15min", outputSize=None,
         start_date=None, end_date=None, _format='CSV'):
-        url = ("https://api.twelvedata.com/macd?symbol=%s&interval=%s&apikey=%s&format=%s" % (symbol, interval, self.key, _format))
+        url = ("https://api.twelvedata.com/macd?symbol=%s&interval=%s&apikey=%s&format=%s&order=ASC" % (symbol, interval, self.key, _format))
         
         if start_date is not None:
             url += "&start_date=%s" % (start_date)

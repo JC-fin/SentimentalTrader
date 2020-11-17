@@ -1,7 +1,7 @@
 import alpaca_trade_api as api
 from TwelveDataWrapper import TwelveDataWrapper as tdw
 from datetime import date, timedelta
-from LSTM import LSTM
+from LSTMv2 import LSTMv2
 
 KEY_ID = "PKM8TR5SZ1SR1BZ39P6N"
 KEY_SECRET = "v3sXwbjf3b4nrmnJEbc2Sso4AuBBa3BYrM8RiKbN"
