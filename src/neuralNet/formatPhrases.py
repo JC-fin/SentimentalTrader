@@ -55,6 +55,6 @@ def make_text(row):
 def test(row):
     print(row['phrase'])
 
-phrases = pd.read_csv('../../data/all-data.csv', encoding='latin-1', names=['sent','phrase'])
+phrases = pd.read_csv('../../data/all-data.csv', encoding='cp1252', names=['sent','phrase'])
 
 phrases.apply(make_text, axis=1)

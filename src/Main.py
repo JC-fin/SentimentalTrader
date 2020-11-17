@@ -15,7 +15,7 @@ def median(arrs):
     return arrs.iloc[size // 2]
 
 def main():
-    train_model = False
+    train_model = True
     training_data_dir = '../data/finData/'
     # tickers = {
     #     'NKLA' : 'Nikola',
