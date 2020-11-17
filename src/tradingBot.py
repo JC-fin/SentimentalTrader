@@ -24,14 +24,12 @@ class TradingBot:
         self.alpaca.submit_order(ticker, qty, "sell", "market", "day")
     
     def predictMovement(self, ticker, model):
-        data = self.tdw.time_series([ticker], interval='1day', outputSize=20)
-        data = model.extractFeatures(data.set_index('datetime'))
-        prediction = model.predict(data)
+        prediction = model.predictNextDay()
         return prediction
     
     def analyzeStocks(self):
         predictions = {}
         for ticker in self.tickers:
-            model = predictions.get(ticker)
+            model = self.LSTMs.get(ticker)
             predictions[ticker] = self.predictMovement(ticker, model)
         return predictions

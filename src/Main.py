@@ -64,8 +64,10 @@ def main():
     trader = TradingBot(tickers.keys())
     predictions = trader.analyzeStocks()
     for ticker in predictions.keys():
-        result = predictions[ticker] + ((medianPred[ticker] - 0.5) * 0.1)
-        if result > 0:
+        result = (predictions[ticker] + medianPred[ticker]) / 2
+        print(predictions[ticker])
+        print(int(abs(0.5 - result) * 20))
+        if result > 0.5:
             trader.buy(ticker, int(abs(0.5 - result) * 20))
         else:
             trader.sell(ticker, int(abs(0.5 - result) * 20))
