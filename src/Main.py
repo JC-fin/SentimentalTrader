@@ -17,33 +17,38 @@ def median(arrs):
 def main():
     train_model = False
     training_data_dir = '../data/finData/'
-    tickers = {
-        'NKLA' : 'Nikola',
-        'MSFT' : 'Microsoft',
-        'AAPL' : 'Apple', 
-        'NFLX' : 'Netflix',
-        'WDAY' : 'Workday',
-        'NVDA' : "Nvidia",
-        'NLOK' : 'Norton',
-        'XRX'  : 'Xerox',
-        'HPQ'  : 'HP',
-        'AMD'  : 'AMD',
-        'MRNA' : 'Moderna',
-        'PTON' : 'Peloton',
-        'HD'   : 'Home Depot'
-    }
+    # tickers = {
+    #     'NKLA' : 'Nikola',
+    #     'MSFT' : 'Microsoft',
+    #     'AAPL' : 'Apple', 
+    #     'NFLX' : 'Netflix',
+    #     'WDAY' : 'Workday',
+    #     'NVDA' : "Nvidia",
+    #     'NLOK' : 'Norton',
+    #     'XRX'  : 'Xerox',
+    #     'HPQ'  : 'HP',
+    #     'AMD'  : 'AMD',
+    #     'MRNA' : 'Moderna',
+    #     'PTON' : 'Peloton',
+    #     'HD'   : 'Home Depot'
+    # }
+
+    tickers = {'NFLX': 'Netflix'}
 
     df = pd.DataFrame(columns=['Date', 'Ticker', 'Headline'])
 
     for key in tickers:
-        # get 20 titles for each ticker in tickers from the last 3 days
-        ts = titleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 20)
+        # get 20 titles for each ticker in tickers from the last 2 days
+        ts = titleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 50)
         ts.main()
         frame = pd.DataFrame({'Date': pd.Series([date.today().strftime('%m/%d/%Y')]).repeat(len(ts.getTitleList())),
         'Ticker': pd.Series(key).repeat(len(ts.getTitleList())),
         'Headline': ts.getTitleList()})
         df = df.append(frame, ignore_index=True)
 
+    
+    
+    print(df)
     dl = DataLoader()
     dl.load_vocab(training_data_dir + 'pos', training_data_dir + 'neg')
 

@@ -147,4 +147,4 @@ if __name__ == "__main__":
     #msft.generateTestData(60)
     #print(msft.Y_train)
     #print(msft.X_train)
-    #print(msft.Y_test)
+
