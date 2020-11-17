@@ -15,7 +15,7 @@ def median(arrs):
     return arrs.iloc[size // 2]
 
 def main():
-    train_model = False
+    train_model = True
     training_data_dir = '../data/finData/'
     tickers = {
         'NKLA' : 'Nikola',
@@ -59,8 +59,8 @@ def main():
     trader = TradingBot(tickers.keys())
     predictions = trader.analyzeStocks()
     for ticker in predictions.keys():
-        result = (predictions[ticker] + medianPred[ticker]) / 2
-        if result > 0.5:
+        result = predictions[ticker] + ((medianPred[ticker] - 0.5) * 0.1)
+        if result > 0:
             trader.buy(ticker, int(abs(0.5 - result) * 20))
         else:
             trader.sell(ticker, int(abs(0.5 - result) * 20))

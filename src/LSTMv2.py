@@ -39,7 +39,7 @@ class LSTMv2:
         self.model.compile(optimizer=optimizers.Adam(lr=0.0005), loss='mse')
 
     def trainModel(self):
-        self.model.fit([self.trainer.X_train, self.trainer.X_technicals], self.trainer.Y_train, epochs=5, shuffle=True, validation_split=0.1, batch_size=32)
+        self.model.fit([self.trainer.X_train, self.trainer.X_technicals], self.trainer.Y_train, epochs=50, shuffle=True, validation_split=0.1, batch_size=32)
 
     def testModel(self, epochs=50):
         trainTestSplit = int(len(self.trainer.raw_data) * 0.80)

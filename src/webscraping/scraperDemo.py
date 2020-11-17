@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 import requests
-# import nltk
+#import nltk
 from nltk.corpus import stopwords
 from string import punctuation
 from collections import Counter
@@ -14,7 +14,7 @@ from selenium import webdriver
 from GoogleNews import GoogleNews
 
 #run this when importing nltk for the first time
-# nltk.download()
+#nltk.download()
 """
 TO DO:
     - Clean up words by removing whitespace

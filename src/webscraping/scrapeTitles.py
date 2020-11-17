@@ -67,6 +67,8 @@ class titleScraper:
             googlenews.search(self.ticker)
 
             result = googlenews.result()
+            if len(result) == 0:
+                break
             df = pd.DataFrame(result)
 
             self.titleList = df['title'].tolist()
