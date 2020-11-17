@@ -54,13 +54,24 @@ class titleScraper:
                 num --> finds at least num titles
 
             Outputs: A list of raw titles
+
+            How: Makese API call to Google News
+                Cleans title list down to just words
+                Strips out any titles that do not contain ticker
         '''
         found = 0
         titles = []
         end = self.end
         start = self.start
 
+        # max start can be reduced by is 7 days
+        tries = 0
+
         while found <= num:
+
+            if not self.validDates() or tries > 7:
+                break
+        
 
             googlenews = GoogleNews(start=start, end=end)
             
@@ -71,19 +82,24 @@ class titleScraper:
                 break
             df = pd.DataFrame(result)
 
-            self.titleList = df['title'].tolist()
-            # self.clean()
-            # self.stripTitleList()
-            found += len(self.titleList)
+            if len(df) > 0:
+                self.titleList = df['title'].tolist() + df['desc'].tolist()
+
+            self.clean()
+            self.stripTitleList()
+            
 
             for t in self.titleList:
-                titles.append((t))
+                if t not in titles:
+                    titles.append((t))
+                    found += 1
             
-            start = end
-            # end = self.extendDate(end, 2)
-
+            start = self.reduceDate(start, 1)
+            
+            tries += 1
+           
+        self.start = start
         self.titleList = titles[:num]
-        self.end = end
 
 
     def clean(self):
@@ -119,31 +135,56 @@ class titleScraper:
     def stripTitleList(self):
 
         """
-        strips titles that do no contains ticker or company name from self.titleList
+        Checks that either the ticker or company name is in the title before adding it to new list
+            Does not add duplicates
         """
         newList = []
         for title in self.titleList:
             if self.ticker.lower() in title or self.tickerToCo[self.ticker] in title:
-                newList.append(title)
+
+                if not title in newList:
+                    newList.append(title)
 
         self.titleList = newList
 
-    def extendDate(self, date, extension):
+    def reduceDate(self, date, reduction):
         """
         Input: 
         
         date --> date to extend
 
-        extension --> number of days to extend date by 
+        reduction --> number of days to extend date by 
 
-        Function: Extends date by <extension>
+        Function: Extends date by <reduction>
         """
 
         d = datetime.datetime.strptime(date, "%m/%d/%Y")
-        d = d + datetime.timedelta(days=extension)
+        d = d - datetime.timedelta(days=reduction)
         return d.strftime("%m/%d/%Y")
 
-    
+    def validDates(self, date=None):
+
+
+        """
+            Checks to make sure that self.start and self.end are not in the future
+
+            Output: 
+                True: if both dates are at least 1 day in the past
+                False: if either date is present or in the future
+
+        """
+        
+        start = datetime.datetime.strptime(self.start, "%m/%d/%Y").date()
+        if date == None:
+            end = datetime.datetime.strptime(self.end, "%m/%d/%Y").date()
+        else:
+            end = datetime.datetime.strptime(date, "%m/%d/%Y").date()
+
+        today = datetime.date.today()
+
+
+        return start <= today and end <= today
+
     def getTicker(self):
         return self.ticker
     
@@ -186,10 +227,11 @@ class titleScraper:
 
 
 
-# ts = titleScraper('MSFT', 'Microsoft', '10/10/2020', '10/10/2020', 10)
+
 # ts.main()
 
-# ts = titleScraper('PTON', 'Peloton', '10/10/2010', '10/10/2010', 200)
+# ts = titleScraper('PTON', 'Peloton', '11/15/2020', '10/10/2010', 100)
+
 
 # ts.main()
 # print(ts.getTitleList())

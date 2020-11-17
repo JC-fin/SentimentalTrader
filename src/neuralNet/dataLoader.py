@@ -9,6 +9,11 @@ import re
 class DataLoader:
     def __init__(self):
         self.vocab = None
+        self.companies = ['nkla', 'nikola', 'msft', 'microsoft', 'aapl', 'apple', 
+                    'nflx', 'netflix', 'wday', 'workday', 'nvda', 'nvidia',
+                     'nlok', 'norton', 'xrx', 'xerox', 'hpq', 'hp', 'amd', 
+                     'amd', 'mrna', 'moderna', 'pton', 'peloton', 'hd', 
+                     'home depot']
    
     # load doc into memory
     @staticmethod
@@ -37,6 +42,9 @@ class DataLoader:
         tokens = [w for w in tokens if not w in stop_words]
         # filter out short tokens
         tokens = [word for word in tokens if len(word) > 1]
+
+        tokens = [word for word in tokens if not word in self.companies]
+
         return tokens
      
     # load doc and add to vocab
