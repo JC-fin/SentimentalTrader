@@ -1,5 +1,4 @@
 from string import punctuation
-from os import listdir
 import os
 from numpy import array
 from keras.preprocessing.text import Tokenizer
@@ -40,7 +39,7 @@ class SentimentTrainer:
     def process_docs(directory, vocab, is_trian):
         documents = list()
         # walk through all files in the folder
-        for filename in listdir(directory):
+        for filename in os.listdir(directory):
             sent, num = re.match(r'([a-z]+)([0-9]+)', filename).groups()
             num = int(num)
             # skip any reviews in the test set
@@ -81,9 +80,8 @@ class SentimentTrainer:
         ytrain = array([0 for _ in range(504)] + [1 for _ in range(1263)])# + [0.5 for _ in range(2779)])
 
         #load all test reviews
-        filepath = os.path.abspath(os.path.dirname(__file__))
-        positive_docs = self.process_docs(filepath +'/../../data/finData/pos', self.vocab, False)
-        negative_docs = self.process_docs(filepath + '/../../data/finData/neg', self.vocab, False)
+        positive_docs = self.process_docs(pos_path, self.vocab, False)
+        negative_docs = self.process_docs(neg_path, self.vocab, False)
         #neutral_docs = process_docs('../../data/finData/neu', vocab, False)
         
         test_docs = negative_docs + positive_docs# + neutral_docs
@@ -120,4 +118,5 @@ class SentimentTrainer:
         # print('Precision: %f' % (prec*100))
 
         # save the model to be used to predict
-        self.model.save('my_model')
+        filepath = os.path.abspath(os.path.dirname(__file__))
+        self.model.save(filepath + '/my_model')
