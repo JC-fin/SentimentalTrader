@@ -7,7 +7,9 @@ from sklearn.preprocessing import MinMaxScaler
 FILE_NAME = '../data/MSFT.csv'
 
 class Trainer:
-    def __init__(self, ticker):
+    # Takes a ticker and date as a string in the following format: 'YYYY-MM-DD' and optional
+    # raw data to limit calls to the API
+    def __init__(self, ticker, date, raw_data=None):
         wrapper = tdw()
         self.input_train = []
         self.input_technicals = []
@@ -16,10 +18,12 @@ class Trainer:
         self.output_test = []
         self.y_normalizer = None
         self.ticker = ticker
-        
-        raw_data1 = wrapper.time_series([ticker], interval='1day', start_date='2000-01-01', end_date='2019-11-15').drop('datetime', axis=1)
-        raw_data2 = wrapper.time_series([ticker], interval='1day', start_date='2019-11-15', end_date='2020-11-12').drop('datetime', axis=1)
-        self.raw_data = raw_data1.append(raw_data2)
+        if raw_data is None: 
+            raw_data1 = wrapper.time_series([ticker], interval='1day', start_date='2000-01-01', end_date='2019-11-15').drop('datetime', axis=1)
+            raw_data2 = wrapper.time_series([ticker], interval='1day', start_date='2019-11-15', end_date=date).drop('datetime', axis=1)
+            self.raw_data = raw_data1.append(raw_data2)
+        else:
+            self.raw_data = raw_data
         
         #self.raw_data = pd.read_csv(FILE_NAME).drop(['Date', 'Adj Close'],axis=1)
         print(self.raw_data)

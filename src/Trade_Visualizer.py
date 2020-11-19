@@ -2,7 +2,12 @@ import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from time import sleep
+from TwelveDataWrapper import TwelveDataWrapper as tdw
+from LSTMv2 import LSTMv2
 from datetime import datetime
+from pandas.tseries.offsets import BDay
+from pandas_datareader import data
 
 class Trade_Visualizer:
     def __init__(self):
@@ -13,6 +18,7 @@ class Trade_Visualizer:
             self.trade_history = self.load_trade_history()
         except FileNotFoundError:
             self.trade_history = {}
+        self.update()
         
     # Given a ticker, date, and either 'buy', 'sell', or 'np.nan' indicating
     # buy/sell, create a record containing the info in the class dict
@@ -28,6 +34,7 @@ class Trade_Visualizer:
         else:
             self.trade_history[ticker] = []
             self.trade_history[ticker].append([date, np.nan, np.nan, buy])
+        self.save_trade_history()
 
     # Given a ticker, date, stock price, and boolean indicating
     # buy/sell, create a record containing the info in the class dict
@@ -128,14 +135,53 @@ class Trade_Visualizer:
         return -1
    
     # Loads missing closing prices and predictions from the last stored closing price and
-    # prediction to the most current closing price and predictions
-    #def update(self, tickers):
-        
+    # prediction to the most current closing price and predictions. Takes a dictionary 
+    # containing trained LSTM models for tickers
+    def update(self):
+        for key in self.trade_history.keys():
+            df = pd.DataFrame(self.trade_history[key], columns=['date', 'act', 'pred', 'buy'])
+            df['date'] = df['date'].apply((lambda x : datetime.strptime(x, '%Y-%m-%d')))
+            first_pred_miss = df.loc[df['pred'].isna()]['date'].max()
+            first_act_miss = df.loc[df['act'].isna()]['date'].max()
+            if (pd.isna(first_pred_miss) and pd.isna(first_act_miss)):
+                #this is an arbitrary time to start tracing the history
+                start_date = datetime(2020, 1, 2)
+            else:
+                start_date = min(first_pred_miss - BDay(1), first_act_miss)
+            dates_needed = pd.date_range(str(start_date), str(datetime.today().date()), freq='B')
+            wrapper = tdw()
+            stock_info1 = wrapper.time_series([key], interval='1day', start_date='2000-01-01', end_date='2019-11-15')
+            stock_info2 = wrapper.time_series([key], interval='1day', start_date='2019-11-11', end_date=str(datetime.today().date()))
+            stock_info = stock_info1.append(stock_info2).reset_index()
+            stock_info.set_index('datetime')
+            # this variable keeps track of how many days old the model is for the current prediction
+            # for big catch ups, ill just train the model every thirty days
+            days_since_train = 30 
+            for date in dates_needed:
+                try:
+                    raw_data = stock_info.iloc[:stock_info.loc[stock_info['datetime'] == str(date.date())].index.values[0] + 1]
+                except IndexError:
+                    continue
+                raw_data = raw_data.drop(['datetime', 'index'], axis=1)
+                if days_since_train == 30:
+                    try:
+                        cur_model = LSTMv2(key, str(date.date()), raw_data=raw_data)
+                    except ValueError:
+                        continue
+                    cur_model.trainModel()
+                    days_since_train = 0
+                prediction = cur_model.predictDay(raw_data.values[-1 * cur_model.histPoints:])[0][0]
+                cur_price = stock_info.loc[stock_info['datetime'] == str(date.date())]['close'].values[0]
+                self.add_pred(key, date + BDay(1), cur_price * (prediction / 100) + cur_price)
+                self.add_actual(key, date, cur_price)
+                print('\n\nCURDATE: ' , date)
+                print('TKR: ', key)
+                print('Pchange: ', prediction)
+                print('Cur_price: ', cur_price)
+                print('prediction: ', cur_price * (prediction / 100) + cur_price)
+                days_since_train += 1
+                
 
-    # Load today's prices closing prices into dictionary
-
-
-    # Load tomorrow's predictions into dictionary
 
 
 

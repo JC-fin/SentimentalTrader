@@ -1,4 +1,5 @@
 from trainModel import Trainer
+from datetime import datetime
 import pandas as pd
 import numpy as np
 import keras
@@ -14,10 +15,11 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 
 class LSTMv2:
-
-    def __init__(self, ticker, histPoints=50): 
+    # takes a ticker, a date as a string in the format 'YYYY-MM-DD', and the number of point to predict on
+    # also takes in optional raw data that will be used in train_model to limit calls to API
+    def __init__(self, ticker, date, histPoints=50, raw_data=None): 
         self.ticker = ticker
-        self.trainer = Trainer(ticker)
+        self.trainer = Trainer(ticker, date, raw_data=raw_data)
         self.histPoints = histPoints
         self.trainer.generateTrainData(histPoints)
         #self.trainer.generateTestData(20)
@@ -76,6 +78,17 @@ class LSTMv2:
     def predictNextDay(self):
         ohlcv = self.trainer.raw_data[-1 * self.histPoints:]
         ohlcv = self.trainer.normalizer.transform(ohlcv)
+        ohlcv = ohlcv.reshape(1, self.histPoints, 5)
+        technical = np.array(ohlcv[:,3].mean()).reshape((1, 1))
+        prediction = self.model.predict([ohlcv, technical])
+        return self.trainer.y_normalizer.inverse_transform(prediction)
+    
+    # Returns the predicted percent change for the day following the last day in the given data
+    # Data should be a 2D array with the most recent information in the last row
+    def predictDay(self, data):
+        if not data.shape == (self.histPoints, 5):
+            raise ValueError('predictDay called with ill-sized data. Given: ' + str(data.shape))
+        ohlcv = self.trainer.normalizer.transform(data)
         ohlcv = ohlcv.reshape(1, self.histPoints, 5)
         technical = np.array(ohlcv[:,3].mean()).reshape((1, 1))
         prediction = self.model.predict([ohlcv, technical])

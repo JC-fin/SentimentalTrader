@@ -1,5 +1,6 @@
 import alpaca_trade_api as api
 from TwelveDataWrapper import TwelveDataWrapper as tdw
+from Trade_Vizualizer import Trade_Vizualizer as tv
 from datetime import date, timedelta
 from LSTMv2 import LSTMv2
 
@@ -11,17 +12,20 @@ class TradingBot:
     def __init__(self, tickers) :
         self.alpaca = api.REST(KEY_ID, KEY_SECRET, URL, 'v2')
         self.LSTMs = {}
+        self.buy_sell_viz = tv()
         self.tickers = tickers
         for ticker in tickers:
-            self.LSTMs[ticker] = LSTMv2(ticker)
+            self.LSTMs[ticker] = LSTMv2(ticker, str(date.now()))
             self.LSTMs[ticker].trainModel()
         self.tdw = tdw()
     
     def buy(self, ticker, qty):
         self.alpaca.submit_order(ticker, qty, "buy", "market", "day")
+        self.buy_sell_viz.add_trade(ticker, date.today(), 'buy')
 
     def sell(self, ticker, qty):
         self.alpaca.submit_order(ticker, qty, "sell", "market", "day")
+        self.buy_sell_viz.add_trade(ticker, date.today(), 'sell')
     
     def predictMovement(self, ticker, model):
         prediction = model.predictNextDay()
