@@ -90,8 +90,8 @@ class LSTMv2:
         return prediction
 
 if __name__ == "__main__":
-    msft = LSTMv2('MSFT', 30)
-    msft.trainModel()
-    print(msft.predictNextDay())
+    ls = LSTMv2('AAPL')
+    ls.trainModel()
+    print(ls.predictNextDay())
     #msft.testModel(epochs=10)
 

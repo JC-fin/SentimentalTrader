@@ -15,25 +15,25 @@ def median(arrs):
     return arrs.iloc[size // 2]
 
 def main():
-    train_model = True
+    train_model = False
     training_data_dir = '../data/finData/'
-    # tickers = {
-    #     'NKLA' : 'Nikola',
-    #     'MSFT' : 'Microsoft',
-    #     'AAPL' : 'Apple', 
-    #     'NFLX' : 'Netflix',
-    #     'WDAY' : 'Workday',
-    #     'NVDA' : "Nvidia",
-    #     'NLOK' : 'Norton',
-    #     'XRX'  : 'Xerox',
-    #     'HPQ'  : 'HP',
-    #     'AMD'  : 'AMD',
-    #     'MRNA' : 'Moderna',
-    #     'PTON' : 'Peloton',
-    #     'HD'   : 'Home Depot'
-    # }
+    tickers = {
+        'NKLA' : 'Nikola',
+        'MSFT' : 'Microsoft',
+        'AAPL' : 'Apple', 
+        'NFLX' : 'Netflix',
+        'WDAY' : 'Workday',
+        'NVDA' : "Nvidia",
+        'NLOK' : 'Norton',
+        'XRX'  : 'Xerox',
+        'HPQ'  : 'HP',
+        'AMD'  : 'AMD',
+        'MRNA' : 'Moderna',
+        'PTON' : 'Peloton',
+        'HD'   : 'Home Depot'
+    }
 
-    tickers = {'NFLX': 'Netflix'}
+    #tickers = {'NFLX': 'Netflix'}
 
     df = pd.DataFrame(columns=['Date', 'Ticker', 'Headline'])
 
