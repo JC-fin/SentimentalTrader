@@ -2,7 +2,7 @@ from tradingBot import TradingBot
 from neuralNet.sentimentTrainer import SentimentTrainer
 from neuralNet.dataLoader import DataLoader
 from neuralNet.sentimentPredictor import SentimentPredictor
-from webscraping.scrapeTitles import titleScraper
+from webscraping.scrapeTitles import TitleScraper
 from datetime import date
 from datetime import timedelta
 import pandas as pd
@@ -39,7 +39,7 @@ def main():
 
     for key in tickers:
         # get 20 titles for each ticker in tickers from the last 2 days
-        ts = titleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 50)
+        ts = TitleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 50)
         ts.main()
         frame = pd.DataFrame({'Date': pd.Series([date.today().strftime('%m/%d/%Y')]).repeat(len(ts.getTitleList())),
         'Ticker': pd.Series(key).repeat(len(ts.getTitleList())),
