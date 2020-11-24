@@ -2,7 +2,8 @@ import alpaca_trade_api as api
 import numpy as numpy
 import pandas as pd
 from TwelveDataWrapper import TwelveDataWrapper as tdw
-from datetime import date, timedelta
+from Trade_Visualizer import Trade_Visualizer as tv
+from datetime import datetime, timedelta
 from LSTMv2 import LSTMv2
 import time
 
@@ -15,20 +16,27 @@ class TradingBot:
         self.alpaca = api.REST(KEY_ID, KEY_SECRET, URL, 'v2')
         self.loadPositions()
         self.LSTMs = {}
-        self.tickers = tickers
+        self.buy_sell_viz = tv()
         for ticker in tickers:
-            self.LSTMs[ticker] = LSTMv2(ticker)
-            self.LSTMs[ticker].trainModel()
-            time.sleep(60)
+            try:
+                self.LSTMs[ticker] = LSTMv2(ticker)
+                self.LSTMs[ticker].trainModel()
+            except KeyError:
+                self.LSTMs.pop(ticker, None)
+                continue
+        self.tickers = self.LSTMs.keys()
+        self.buy_sell_viz.update_today(self.LSTMs)
         self.tdw = tdw()
     
     def buy(self, ticker, qty):
         self.alpaca.submit_order(ticker, qty, "buy", "market", "day")
-
+        self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_pred_date(ticker), 'buy')
+        
     def sell(self, ticker, qty):
         if ticker in self.positions.index:
             toSell = min(self.positions.loc[ticker], qty)
             self.alpaca.submit_order(ticker, toSell, "sell", "market", "day")
+            self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_pred_date(ticker), 'sell')
     
     def predictMovement(self, ticker, model):
         prediction = model.predictNextDay()

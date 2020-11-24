@@ -1,4 +1,5 @@
 from trainModel import Trainer
+from datetime import datetime
 import pandas as pd
 import numpy as np
 import keras
@@ -12,10 +13,9 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 
 class LSTMv2:
-
-    def __init__(self, ticker, histPoints=30): 
+    def __init__(self, ticker, raw_data=None, histPoints=30): 
         self.ticker = ticker
-        self.trainer = Trainer(ticker)
+        self.trainer = Trainer(ticker, raw_data=raw_data)
         self.histPoints = histPoints
         self.trainer.generateTrainData(histPoints)
 
@@ -82,6 +82,15 @@ class LSTMv2:
     def predictNextDay(self):
         changes = self.trainer.raw_data[-1 * self.histPoints:]
         changes = np.hstack((self.trainer.normalizer.transform(changes[:, [0]]), changes[:, [1]]))
+        changes = changes.reshape(1, self.histPoints, 2)
+        ema12 = self.trainer.expoMovingAvg(12, len(self.trainer.ohlcv))
+        ema26 = self.trainer.expoMovingAvg(26, len(self.trainer.ohlcv))
+        macd = np.array([ema26 - ema12])
+        prediction = self.model.predict([changes, macd])
+        return prediction
+
+    def predictDay(self, data):
+        changes = np.hstack((self.trainer.normalizer.transform(data[:, [0]]), data[:, [1]]))
         changes = changes.reshape(1, self.histPoints, 2)
         ema12 = self.trainer.expoMovingAvg(12, len(self.trainer.ohlcv))
         ema26 = self.trainer.expoMovingAvg(26, len(self.trainer.ohlcv))

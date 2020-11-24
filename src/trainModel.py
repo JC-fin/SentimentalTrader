@@ -6,7 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 FILE_NAME = '../data/MSFT.csv'
 
 class Trainer:
-    def __init__(self, ticker):
+    def __init__(self, ticker, raw_data=None):
         wrapper = tdw()
         self.input_train = []
         self.input_technicals = []
@@ -15,12 +15,12 @@ class Trainer:
         self.output_test = []
         self.y_normalizer = None
         self.ticker = ticker
-        
-        raw_data1 = wrapper.time_series([ticker], interval='1day', start_date='2000-01-01', end_date='2019-11-15').drop('datetime', axis=1)
-        raw_data2 = wrapper.time_series([ticker], interval='1day', start_date='2019-11-15').drop('datetime', axis=1)
-        self.raw_data = raw_data1.append(raw_data2)
-        print(raw_data1.columns)
-        
+        if raw_data is None:
+            raw_data1 = wrapper.time_series([ticker], interval='1day', start_date='2000-01-01', end_date='2019-11-15').drop('datetime', axis=1)
+            raw_data2 = wrapper.time_series([ticker], interval='1day', start_date='2019-11-15').drop('datetime', axis=1)
+            self.raw_data = raw_data1.append(raw_data2)
+        else:
+            self.raw_data = raw_data
         self.ohlcv = self.raw_data.values
         self.raw_data['change'] = (self.raw_data['close'] - self.raw_data['open']) / self.raw_data['open']
         self.raw_data = self.raw_data.drop(['open', 'close', 'high', 'low'], axis=1)
