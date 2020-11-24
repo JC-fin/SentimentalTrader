@@ -1,6 +1,6 @@
 NFLX
-11/09/2020
 11/19/2020
+11/16/2020
 
 netflix inc nflx moved important
 netflix nasdaqnflx downgraded c thestreet
@@ -44,3 +44,11 @@ coronavirus vaccine negative netflix stock reason
 noteworthy wednesday option activity biib aes nflx
 netflixs nasdaqnflx stock price plunged monday trading following announcement pfizer development vaccine covid
 netflix inc symbol nflx saw options trading volume contracts representing approximately million underlying shares approximately
+<<<<<<< HEAD
+=======
+netflix stock could headed back toward record levels
+shares netflix inc nasdaqnflx afternoon streaming concern cooling flirting
+netflixs newest innovation comes unlikely form
+netflix nasdaqnflx thats right streaming leader singlehandedly responsible rapidly escalating decline linear model could actually
+
+>>>>>>> 9251dc86957f6b43f4ea609f52152cdf5ac631ce
