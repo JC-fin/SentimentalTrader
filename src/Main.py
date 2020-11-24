@@ -24,6 +24,8 @@ def main():
         'NFLX' : 'Netflix',
         'WDAY' : 'Workday',
         'NVDA' : "Nvidia",
+    }
+    """
         'NLOK' : 'Norton',
         'XRX'  : 'Xerox',
         'HPQ'  : 'HP',
@@ -32,6 +34,7 @@ def main():
         'PTON' : 'Peloton',
         'HD'   : 'Home Depot'
     }
+    """
 
     #tickers = {'NFLX': 'Netflix'}
 
@@ -67,7 +70,7 @@ def main():
         result = (predictions[ticker] + (medianPred[ticker] - 0.5) * .1)
         if result > 0:
             trader.buy(ticker, int(abs(result) * 100))
-        elif result < 0:
+        elif result < 0 and ticker == 'NFLX':
             trader.sell(ticker, int(abs(result) * 100))
         else:
             print("No chang was predicted")
