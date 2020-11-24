@@ -1,11 +1,11 @@
 import alpaca_trade_api as api
 from TwelveDataWrapper import TwelveDataWrapper as tdw
-from Trade_Vizualizer import Trade_Vizualizer as tv
-from datetime import date, timedelta
+from Trade_Visualizer import Trade_Visualizer as tv
+from datetime import datetime, timedelta
 from LSTMv2 import LSTMv2
 
-KEY_ID = "PKM8TR5SZ1SR1BZ39P6N"
-KEY_SECRET = "v3sXwbjf3b4nrmnJEbc2Sso4AuBBa3BYrM8RiKbN"
+KEY_ID = "PKUSO4DJQOO2NNX17NKG"
+KEY_SECRET = "oS7d1pGVruPH4At5KzZ4ibTagik0Qy0o6ciqsZf5"
 URL = "https://paper-api.alpaca.markets"
 
 class TradingBot:
@@ -13,19 +13,24 @@ class TradingBot:
         self.alpaca = api.REST(KEY_ID, KEY_SECRET, URL, 'v2')
         self.LSTMs = {}
         self.buy_sell_viz = tv()
-        self.tickers = tickers
         for ticker in tickers:
-            self.LSTMs[ticker] = LSTMv2(ticker, str(date.now()))
-            self.LSTMs[ticker].trainModel()
+            try:
+                self.LSTMs[ticker] = LSTMv2(ticker)
+                self.LSTMs[ticker].trainModel()
+            except KeyError:
+                self.LSTMs.pop(ticker, None)
+                continue
+        self.tickers = self.LSTMs.keys()
+        self.buy_sell_viz.update_today(self.LSTMs)
         self.tdw = tdw()
     
     def buy(self, ticker, qty):
         self.alpaca.submit_order(ticker, qty, "buy", "market", "day")
-        self.buy_sell_viz.add_trade(ticker, date.today(), 'buy')
-
+        self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_pred_date(ticker), 'buy')
+        
     def sell(self, ticker, qty):
         self.alpaca.submit_order(ticker, qty, "sell", "market", "day")
-        self.buy_sell_viz.add_trade(ticker, date.today(), 'sell')
+        self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_pred_date(ticker), 'sell')
     
     def predictMovement(self, ticker, model):
         prediction = model.predictNextDay()
