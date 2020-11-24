@@ -1,8 +1,10 @@
 from string import punctuation
 from os import listdir
 from collections import Counter
+#import nltk
 from nltk.corpus import stopwords
 import re
+#nltk.download('stopwords')
 
 class DataLoader:
     def __init__(self):

@@ -1,0 +1,1 @@
+It started with software that was capable of retrieving the data typed into the computer keyboard ( `` keyloggers '' ) , and then more complex mechanisms arrived on the scene , such as phishing and pharming .
