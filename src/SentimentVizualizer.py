@@ -261,16 +261,16 @@ class SentimentVizualizer:
 
     def main(self):
 
-        # for tickerDict in self.tickerList:
+        for tickerDict in self.tickerList:
         
-        #     dates, sentiments = self.getMonthsSentiment(tickerDict)
+            dates, sentiments = self.getMonthsSentiment(tickerDict)
 
-        #     df = pd.DataFrame(
-        #         {'Dates': dates, 'Median Sentiment': sentiments}).sort_values('Dates')
+            df = pd.DataFrame(
+                {'Dates': dates, 'Median Sentiment': sentiments}).sort_values('Dates')
 
-        #     ticker = list(tickerDict.keys())[0]
+            ticker = list(tickerDict.keys())[0]
             
-        #     self.writeSentiment(df, ticker)
+            self.writeSentiment(df, ticker)
 
         tickerList = [list(dict.keys())[0] for dict in self.tickerList]
 
