@@ -7,6 +7,7 @@ from datetime import date
 from datetime import timedelta
 import pandas as pd
 import numpy as np
+import os
 
 def median(arrs):
     arrs.dropna(inplace=True)
@@ -16,43 +17,44 @@ def median(arrs):
 
 def main():
     train_model = False
-    scrapes_per_article = 50
-    # ONLY FOR MICHAELS VSCODE
-    training_data_dir = './data/finData/'
 
-    # training_data_dir = '../data/finData/'
-    # tickers = {
-    #     'NKLA' : 'Nikola',
-    #     'MSFT' : 'Microsoft',
-    #     'AAPL' : 'Apple', 
-    #     'NFLX' : 'Netflix',
-    #     'WDAY' : 'Workday',
-    #     'NVDA' : "Nvidia",
-    #     'NLOK' : 'Norton',
-    #     'XRX'  : 'Xerox',
-    #     'HPQ'  : 'HP',
-    #     'AMD'  : 'AMD',
-    #     'MRNA' : 'Moderna',
-    #     'PTON' : 'Peloton',
-    #     'HD'   : 'Home Depot'
-    # }
+    scrapes_per_article = 10
 
-    tickers = {'NFLX': 'Netflix'}
+    training_data_dir = '../data/finData/'
+    tickers = {
+        'NKLA' : 'Nikola',
+        'MSFT' : 'Microsoft',
+        'AAPL' : 'Apple', 
+        'NFLX' : 'Netflix',
+        'WDAY' : 'Workday',
+        'NVDA' : "Nvidia",
+        'NLOK' : 'Norton',
+        'XRX'  : 'Xerox',
+        'HPQ'  : 'HP',
+        'AMD'  : 'AMD',
+        'MRNA' : 'Moderna',
+        'PTON' : 'Peloton',
+        'HD'   : 'Home Depot'
+    }
+
+
+    #tickers = {'NFLX': 'Netflix'}
 
     df = pd.DataFrame(columns=['Date', 'Ticker', 'Headline'])
 
     for key in tickers:
         # get 20 titles for each ticker in tickers from the last 2 days
+        
         ts = TitleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), scrapes_per_article)
+
         ts.main()
         frame = pd.DataFrame({'Date': pd.Series([date.today().strftime('%m/%d/%Y')]).repeat(len(ts.getTitleList())),
         'Ticker': pd.Series(key).repeat(len(ts.getTitleList())),
         'Headline': ts.getTitleList()})
         df = df.append(frame, ignore_index=True)
 
-    
-    
-    print(df)
+    # print(df)
+    print(os.path.abspath(training_data_dir))
     dl = DataLoader()
     dl.load_vocab(training_data_dir + 'pos', training_data_dir + 'neg')
 
@@ -68,13 +70,13 @@ def main():
     trader = TradingBot(tickers.keys())
     predictions = trader.analyzeStocks()
     for ticker in predictions.keys():
-        result = (predictions[ticker] + medianPred[ticker]) / 2
-        print(predictions[ticker])
-        print(int(abs(0.5 - result) * 20))
-        if result > 0.5:
-            trader.buy(ticker, int(abs(0.5 - result) * 20))
+        result = (predictions[ticker] + (medianPred[ticker] - 0.5) * .1)
+        if result > 0:
+            trader.buy(ticker, int(abs(result) * 100))
+        elif result < 0:
+            trader.sell(ticker, int(abs(result) * 100))
         else:
-            trader.sell(ticker, int(abs(0.5 - result) * 20))
+            print("No chang was predicted")
 
 if __name__ == "__main__":
     main()
