@@ -15,6 +15,7 @@ from GoogleNews import GoogleNews
 import datetime
 
 
+
 class TitleScraper:
     def __init__(self, ticker='None', company='None', start='01/01/20', end='01/08/20', num=0):
         '''
@@ -35,6 +36,7 @@ class TitleScraper:
 
         Function: Call main to scrape articles and write to files
         '''
+
         self.ticker = ticker
         self.start = start
         self.end = end
@@ -86,6 +88,13 @@ class TitleScraper:
             self.clean()
             self.stripTitleList()
             
+            if self.titleList is not None:
+                print(self.start, self.end)
+                print("after stripTitleList: Not None")
+            else:
+                print(self.start, self.end)
+                print("after stripTitleList: None")
+
 
             for t in self.titleList:
                 if t not in titles:
@@ -99,10 +108,24 @@ class TitleScraper:
         self.start = start
         self.titleList = titles[:num]
 
+    def dummyFunc(self):
+        print("TEST")
 
     def clean(self):
         #remove punctuation
         table = str.maketrans('', '', punctuation + "1234567890")
+
+        if self.titleList is not None:
+            print(self.start, self.end)
+            print("clean: Not None")
+        else:
+            print("clean: None")
+            print(self.start, self.end)
+
+        if self.titleList == None:
+
+            self.titleList = []
+            return
 
         self.titleList = [unidecode(word).translate(table).strip()
                         for word in self.titleList]
@@ -131,6 +154,13 @@ class TitleScraper:
         self.titleList = newContent
 
     def stripTitleList(self):
+
+        if self.titleList is not None:
+            print("StripTitleList: Not None")
+            print(self.start, self.end)
+        else:
+            print("StripTitleList: None")
+            print(self.start, self.end)
 
         """
         Checks that either the ticker or company name is in the title before adding it to new list
@@ -226,9 +256,27 @@ class TitleScraper:
 
 
 
-# ts.main()
 
-# ts = TitleScraper('PTON', 'Peloton', '11/15/2020', '10/10/2010', 100)
+
+
+
+
+
+
+# for i in range(30):
+#     start = (datetime.date.today() - datetime.timedelta(days=i))
+#     end = start
+
+#     start = start.strftime('%m/%d/%Y')
+#     end = end.strftime('%m/%d/%Y')
+#     # end  = start + timedelta(days=1)
+
+#     ts = TitleScraper('MSFT', 'Microsoft', start, end, 10)
+#     ts.main()
+
+   
+
+
 
 
 # ts.main()
