@@ -17,9 +17,8 @@ def median(arrs):
 
 def main():
     train_model = False
-    
-    # # FOR MICHAELS VSCODE
-    # training_data_dir = './data/finData/'
+
+    scrapes_per_article = 10
 
     training_data_dir = '../data/finData/'
     tickers = {
@@ -38,13 +37,16 @@ def main():
         'HD'   : 'Home Depot'
     }
 
+
     #tickers = {'NFLX': 'Netflix'}
 
     df = pd.DataFrame(columns=['Date', 'Ticker', 'Headline'])
 
     for key in tickers:
         # get 20 titles for each ticker in tickers from the last 2 days
-        ts = TitleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), 10)
+        
+        ts = TitleScraper(key, tickers[key], (date.today() - timedelta(days=2)).strftime('%m/%d/%Y'), date.today().strftime('%m/%d/%Y'), scrapes_per_article)
+
         ts.main()
         frame = pd.DataFrame({'Date': pd.Series([date.today().strftime('%m/%d/%Y')]).repeat(len(ts.getTitleList())),
         'Ticker': pd.Series(key).repeat(len(ts.getTitleList())),
