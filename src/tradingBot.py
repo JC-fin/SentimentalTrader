@@ -26,11 +26,11 @@ class TradingBot:
     
     def buy(self, ticker, qty):
         self.alpaca.submit_order(ticker, qty, "buy", "market", "day")
-        self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_pred_date(ticker), 'buy')
+        self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_act_date(ticker), 'buy')
         
     def sell(self, ticker, qty):
         self.alpaca.submit_order(ticker, qty, "sell", "market", "day")
-        self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_pred_date(ticker), 'sell')
+        self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_act_date(ticker), 'sell')
     
     def predictMovement(self, ticker, model):
         prediction = model.predictNextDay()
