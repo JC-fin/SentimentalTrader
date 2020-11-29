@@ -109,13 +109,16 @@ class SentimentTrainer:
         print(self.model.summary())
 
         # compile network
-        self.model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+        self.model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['acc', 'Precision', 'Recall'])
         # fit network
         self.model.fit(Xtrain, ytrain, epochs=10, verbose=2)
         # evaluate
-        loss, acc = self.model.evaluate(Xtest, ytest, verbose=0)
+        loss, acc, prec, rec = self.model.evaluate(Xtest, ytest, verbose=0)
+        f1 = (2 * prec * rec) / (prec + rec)
         print('Test Accuracy: %f' % (acc*100))
-        # print('Precision: %f' % (prec*100))
+        print('Test Precision: %f' % (prec*100))
+        print('Test Recall: %f' % (rec*100))
+        print('Test F1: %f' % (100*f1))
 
         # save the model to be used to predict
         filepath = os.path.abspath(os.path.dirname(__file__))
