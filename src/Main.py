@@ -28,6 +28,8 @@ def main():
         'NFLX' : 'Netflix',
         'WDAY' : 'Workday',
         'NVDA' : "Nvidia",
+    }
+    """
         'NLOK' : 'Norton',
         'XRX'  : 'Xerox',
         'HPQ'  : 'HP',
@@ -36,6 +38,7 @@ def main():
         'PTON' : 'Peloton',
         'HD'   : 'Home Depot'
     }
+    """
 
 
     #tickers = {'NFLX': 'Netflix'}
