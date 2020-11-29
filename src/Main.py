@@ -1,6 +1,5 @@
 from tradingBot import TradingBot
 from neuralNet.sentimentTrainer import SentimentTrainer
-from neuralNet.dataLoader import DataLoader
 from neuralNet.sentimentPredictor import SentimentPredictor
 from webscraping.scrapeTitles import TitleScraper
 from datetime import date
@@ -16,11 +15,9 @@ def median(arrs):
     return arrs.iloc[size // 2]
 
 def main():
-    train_model = True
-
     scrapes_per_article = 10
 
-    training_data_dir = '../data/finData/'
+    training_data_dir = '../data/'
     tickers = {
         'NKLA' : 'Nikola',
         'MSFT' : 'Microsoft',
@@ -53,14 +50,10 @@ def main():
         'Headline': ts.getTitleList()})
         df = df.append(frame, ignore_index=True)
 
-    dl = DataLoader()
-    dl.load_vocab(training_data_dir + 'pos', training_data_dir + 'neg')
+    st = SentimentTrainer()
+    st.train_model(training_data_dir + 'all-data.csv')
 
-    if train_model:
-        st = SentimentTrainer(dl.vocab)
-        st.train_model(training_data_dir + 'pos', training_data_dir + 'neg')
-
-    sp = SentimentPredictor(dl.vocab)
+    sp = SentimentPredictor(st)
     sp.predict_sentiment(df)
 
     medianPred = df.groupby('Ticker')['Prediction'].apply(median).rename('median')
