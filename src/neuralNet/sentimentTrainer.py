@@ -19,7 +19,6 @@ class SentimentTrainer:
         self.tokenizer = Tokenizer()
         self.vocab = vocab
  
-    # turn a doc into clean tokens
     @staticmethod
     def clean_doc(doc, vocab):
         # make doc lowercase
@@ -34,18 +33,18 @@ class SentimentTrainer:
         tokens = ' '.join(tokens)
         return tokens
  
-    # load all docs in a directory
+    # return a list of cleaned word vectors for all docs in a directory
     @staticmethod
     def process_docs(directory, vocab, is_trian):
         documents = list()
-        # walk through all files in the folder
+        # walk through all files in given directory
         for filename in os.listdir(directory):
             sent, num = re.match(r'([a-z]+)([0-9]+)', filename).groups()
             num = int(num)
-            # skip any reviews in the test set
-            if is_trian and ((sent == 'pos' and num >= 1263) or (sent == 'neg' and num >= 504) or (sent == 'neu' and num >= 2779)):
+            # process either training docs or testing docs
+            if is_trian and ((sent == 'pos' and num >= 1263) or (sent == 'neg' and num >= 504)):
                 continue
-            if not is_trian and not ((sent == 'pos' and num >= 1263) or (sent == 'neg' and num >= 504) or (sent == 'neu' and num >= 2779)):
+            if not is_trian and not ((sent == 'pos' and num >= 1263) or (sent == 'neg' and num >= 504)):
                 continue
             # create the full path of the file to open
             path = directory + '/' + filename
@@ -58,44 +57,41 @@ class SentimentTrainer:
         return documents
 
     def train_model(self, pos_path, neg_path):
-        # load all training reviews
+        # load all training docs
         positive_docs = self.process_docs(pos_path, self.vocab, True)
         negative_docs = self.process_docs(neg_path, self.vocab, True)
-        #neutral_docs = process_docs('../../data/finData/neu', vocab, True)
         
-        train_docs = negative_docs + positive_docs# + neutral_docs
+        train_docs = negative_docs + positive_docs
         
         # fit the tokenizer on the documents
         self.tokenizer.fit_on_texts(train_docs)
         
-        # sequence encode
+        # convert the words lists into sequence vectors
         encoded_docs = self.tokenizer.texts_to_sequences(train_docs)
         
         # pad sequences
-        self.max_length = max([len(s.split()) for s in train_docs]) #TODO: test with arbitrary max length (possibly 50?)
-        print('maxLength: ' + str(self.max_length))
+        self.max_length = max([len(s.split()) for s in train_docs])
         Xtrain = pad_sequences(encoded_docs, maxlen=self.max_length, padding='post')
         
         # define training labels
-        ytrain = array([0 for _ in range(504)] + [1 for _ in range(1263)])# + [0.5 for _ in range(2779)])
+        ytrain = array([0 for _ in range(504)] + [1 for _ in range(1263)])
 
-        #load all test reviews
+        #load all testing docs
         positive_docs = self.process_docs(pos_path, self.vocab, False)
         negative_docs = self.process_docs(neg_path, self.vocab, False)
-        #neutral_docs = process_docs('../../data/finData/neu', vocab, False)
         
-        test_docs = negative_docs + positive_docs# + neutral_docs
+        test_docs = negative_docs + positive_docs
         
-        # sequence encode
+        # convert the words lists into sequence vectors
         encoded_docs = self.tokenizer.texts_to_sequences(test_docs)
         
         # pad sequences
         Xtest = pad_sequences(encoded_docs, maxlen=self.max_length, padding='post')
         
         # define test labels
-        ytest = array([0 for _ in range(100)] + [1 for _ in range(100)])# + [0.5 for _ in range(100)])
+        ytest = array([0 for _ in range(100)] + [1 for _ in range(100)])
          
-        # define vocabulary size (largest integer value)
+        # define vocabulary size
         vocab_size = len(self.tokenizer.word_index) + 1
          
         # define model
@@ -108,12 +104,14 @@ class SentimentTrainer:
         self.model.add(Dense(1, activation='sigmoid'))
         print(self.model.summary())
 
-        # compile network
-        self.model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['acc', 'Precision', 'Recall'])
-        # fit network
-        self.model.fit(Xtrain, ytrain, epochs=10, verbose=2)
-        # evaluate
-        loss, acc, prec, rec = self.model.evaluate(Xtest, ytest, verbose=0)
+        # compile model
+        self.model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy', 'Precision', 'Recall'])
+        
+        # fit model
+        self.model.fit(Xtrain, ytrain, batch_size = 512, epochs=10)
+        
+        # evaluate model
+        loss, acc, prec, rec = self.model.evaluate(Xtest, ytest)
         f1 = (2 * prec * rec) / (prec + rec)
         print('Test Accuracy: %f' % (acc*100))
         print('Test Precision: %f' % (prec*100))

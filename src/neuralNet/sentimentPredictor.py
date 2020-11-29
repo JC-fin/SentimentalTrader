@@ -19,7 +19,6 @@ class SentimentPredictor:
         self.tokenizer.fit_on_texts(SentimentTrainer.process_docs(filepath + '/../../data/finData/neg/', self.vocab, True) + 
             SentimentTrainer.process_docs(filepath + '/../../data/finData/pos/', self.vocab, True))
 
-
     def predict(self, row):
         tokens = SentimentTrainer.clean_doc(row['Headline'], self.vocab)
         seqs = list()
@@ -31,8 +30,5 @@ class SentimentPredictor:
         return self.model.predict(seqs)
 
     def predict_sentiment(self, dataframe):
-        def test(x):
-            print(x)
-            return self.predict(x)
-        dataframe['Prediction'] = dataframe.apply(test, axis = 1)
+        dataframe['Prediction'] = dataframe.apply(self.predict, axis = 1)
         return dataframe
