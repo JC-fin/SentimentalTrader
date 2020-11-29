@@ -31,17 +31,17 @@ class Trainer:
         print(self.normalized_data)    
 
     def getDataFromAPI(self):
-            wrapper = tdw()
-            stock_p1 = wrapper.time_series([self.ticker], interval='1day', start_date='2019-09-16 09:30:00', end_date='2020-04-22 15:30:00').sort_values('datetime', ascending=True).set_index('datetime')
+        wrapper = tdw()
+        stock_p1 = wrapper.time_series([self.ticker], interval='1day', start_date='2019-09-16 09:30:00', end_date='2020-04-22 15:30:00').sort_values('datetime', ascending=True).set_index('datetime')
 
-            stock_p2 = wrapper.time_series([self.ticker], interval='15min', start_date='2020-04-22 15:45:00', end_date='2020-10-29').sort_values('datetime', ascending=True).set_index('datetime')
+        stock_p2 = wrapper.time_series([self.ticker], interval='15min', start_date='2020-04-22 15:45:00', end_date='2020-10-29').sort_values('datetime', ascending=True).set_index('datetime')
 
-            macd_p1 = wrapper.macd(self.ticker, interval='15min', start_date='2019-09-16 09:30:00', end_date='2020-04-22 15:30:00').sort_values('datetime', ascending=True).set_index('datetime')
+        macd_p1 = wrapper.macd(self.ticker, interval='15min', start_date='2019-09-16 09:30:00', end_date='2020-04-22 15:30:00').sort_values('datetime', ascending=True).set_index('datetime')
 
-            macd_p2 = wrapper.macd(self.ticker, interval='15min', start_date='2020-04-22 15:45:00', end_date='2020-10-29').sort_values('datetime', ascending=True).set_index('datetime')
+        macd_p2 = wrapper.macd(self.ticker, interval='15min', start_date='2020-04-22 15:45:00', end_date='2020-10-29').sort_values('datetime', ascending=True).set_index('datetime')
 
-            stock_conglomerated = stock_p1.append(stock_p2).drop(['high', 'low'], axis=1)
-            stock_conglomerated.to_csv('../data/stockdata_15min.csv')
+        stock_conglomerated = stock_p1.append(stock_p2).drop(['high', 'low'], axis=1)
+        stock_conglomerated.to_csv('../data/stockdata_15min.csv')
 
 
     

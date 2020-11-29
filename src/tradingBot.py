@@ -34,7 +34,8 @@ class TradingBot:
         
     def sell(self, ticker, qty):
         if ticker in self.positions.index:
-            toSell = min(self.positions.loc[ticker], qty)
+            print(self.positions.loc[ticker])
+            toSell = str(min(self.positions.loc[ticker], qty))
             self.alpaca.submit_order(ticker, toSell, "sell", "market", "day")
             self.buy_sell_viz.add_trade(ticker, self.buy_sell_viz.last_pred_date(ticker), 'sell')
     
@@ -60,4 +61,5 @@ class TradingBot:
 
 if __name__ == '__main__':
     pac = TradingBot(['MSFT'])
-    print(pac.getPositions())
+    pac.sell('MSFT', 1)
+    #print(pac.getPositions())
