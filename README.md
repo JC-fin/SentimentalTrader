@@ -7,7 +7,6 @@ Data 301 Quarter-long Project: A trading bot running sentiment analysis on web-s
 
 
 ## -------Sentiment Analysis-------
-
 ### Webscraping
 Source files found in src/webscraping
 * scrapeTitles.py
