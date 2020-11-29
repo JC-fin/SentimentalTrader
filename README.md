@@ -20,7 +20,7 @@ Data found in data/
 * epochsVsF1.csv
 
 Visuals found in visuals/
-* <ticker>_buysell.png
+* ticker_buysell.png
 
 ## -------Sentiment Analysis-------
 ### Webscraping
