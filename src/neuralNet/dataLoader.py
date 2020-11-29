@@ -52,14 +52,14 @@ class DataLoader:
         for filename in listdir(directory):
             sent, num = re.match(r'([a-z]+)([0-9]+)', filename).groups()
             num = int(num)
+            
             # process either training docs or testing docs
             if is_trian and ((sent == 'pos' and num >= 1263) or (sent == 'neg' and num >= 504)):
                 continue
             if not is_trian and not ((sent == 'pos' and num >= 1263) or (sent == 'neg' and num >= 504)):
                 continue
-            # create the full path of the file to open
+            
             path = directory + '/' + filename
-            # add doc to vocab
             self.add_doc_to_vocab(path, vocab)
 
     def load_vocab(self, neg_path, pos_path):
