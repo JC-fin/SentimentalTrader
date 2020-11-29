@@ -22,7 +22,7 @@ class LSTMv2:
         lstmInput = Input(shape=(histPoints, 2), name='lstm_input')
         denseInput = Input(shape=(self.trainer.X_technicals.shape[1],), name='tech_input')
 
-        x = LSTM(50, name='lstm_0')(lstmInput)
+        x = LSTM(histPoints, name='lstm_0')(lstmInput)
         x = Dropout(0.2, name='lstm_dropout_0')(x)
         lstmBranch = Model(inputs=lstmInput, outputs=x)
 
@@ -76,8 +76,8 @@ class LSTMv2:
         print("Precison: ", precision)
         print("Recall: ", recall)
         print("F1: ", f1)
-        with open("../data/epochsVsF1.csv", "a") as fp:
-            fp.write("%d,%f\n" % (epochs, f1))
+        #with open("../data/epochsVsF1.csv", "a") as fp:
+        #    fp.write("%d,%f\n" % (epochs, f1))
     
     def predictNextDay(self):
         changes = self.trainer.raw_data[-1 * self.histPoints:]
@@ -101,6 +101,6 @@ class LSTMv2:
 if __name__ == "__main__":
     ls = LSTMv2('AAPL')
     ls.trainModel()
-    print(ls.predictNextDay())
-    #msft.testModel(epochs=10)
+    #print(ls.predictNextDay())
+    ls.testModel(epochs=50)
 
