@@ -8,5 +8,11 @@ Source files found in src/neuralNet/
 
 Data found in data/
 * all-data.csv
-* MonthsSentiment/ Contains median sentiment each day for the last 30 days
-** test
+
+
+### Sentiment Vizualization
+Source files found in src/
+*
+Data found in data/
+* MonthsSentiment/ Contains csv's by company of median sentiment each day for the last 30 days
+
