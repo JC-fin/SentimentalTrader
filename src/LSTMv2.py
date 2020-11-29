@@ -41,7 +41,7 @@ class LSTMv2:
     def trainModel(self):
         self.model.fit([self.trainer.X_train, self.trainer.X_technicals], self.trainer.Y_train, epochs=50, shuffle=True, validation_split=0.1, batch_size=32)
 
-    def testModel(self, epochs=50):
+    def testModel(self, epochs=50, saveToFile=True):
         trainTestSplit = int(len(self.trainer.raw_data) * 0.80)
         train_ohlc = self.trainer.X_train[:trainTestSplit]
         train_technicals = self.trainer.X_technicals[:trainTestSplit]
@@ -76,8 +76,9 @@ class LSTMv2:
         print("Precison: ", precision)
         print("Recall: ", recall)
         print("F1: ", f1)
-        #with open("../data/epochsVsF1.csv", "a") as fp:
-        #    fp.write("%d,%f\n" % (epochs, f1))
+        if saveToFile:
+            with open("../data/epochsVsF1.csv", "a") as fp:
+                fp.write("%d,%f\n" % (epochs, f1))
     
     def predictNextDay(self):
         changes = self.trainer.raw_data[-1 * self.histPoints:]
@@ -102,5 +103,5 @@ if __name__ == "__main__":
     ls = LSTMv2('AAPL')
     ls.trainModel()
     #print(ls.predictNextDay())
-    ls.testModel(epochs=50)
+    ls.testModel(epochs=50, saveToFile=False)
 
