@@ -2,12 +2,14 @@
 Data 301 Quarter-long Project: A trading bot running sentiment analysis on web-scraped articles in order to enact stock trades
 
 ## -------Quantitative Analysis-------
-### Quantitative Data Collection
+### Quantitative Data Collection and API Interaction
 Source files found in src/
 * TwelveDataWrapper.py
-* Data Retriever.py
+* DataRetriever.py
+* TradingBot.py
 
 ### Quantitative Analysis LSTM
+Source files found in src/
 * LSTM.py
 * LSTMv2.py
 * quant_trainer.py
