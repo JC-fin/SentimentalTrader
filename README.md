@@ -1,6 +1,14 @@
 # SentimentalTrader
 Data 301 Quarter-long Project: A trading bot running sentiment analysis on web-scraped articles in order to enact stock trades
 
+### Webscraping
+Source files found in src/webscraping
+* scrapeTitles.py
+
+Data found in src/webscraping
+* Requests/
+* Scrapes/
+
 ### Sentiment Analysis CNN
 Source files found in src/neuralNet/
 * sentimentTrainer.py
@@ -12,7 +20,13 @@ Data found in data/
 
 ### Sentiment Vizualization
 Source files found in src/
-*
+* SentimentVizualizer.ipynb
+* SentimentVizualizer.py
+
 Data found in data/
-* MonthsSentiment/ Contains csv's by company of median sentiment each day for the last 30 days
+* MonthsSentiment/
+
+
+
+
 
