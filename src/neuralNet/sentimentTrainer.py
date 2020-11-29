@@ -1,5 +1,6 @@
 from string import punctuation
 import os
+import pandas as pd
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
@@ -10,89 +11,91 @@ from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 import numpy as np
 import re
-from neuralNet.dataLoader import DataLoader
+from nltk.corpus import stopwords
+from collections import Counter
+from sklearn.model_selection import train_test_split
 
 class SentimentTrainer:
-    def __init__ (self, vocab):
+    def __init__ (self):
         self.model = None
         self.max_length = 0
         self.tokenizer = Tokenizer()
-        self.vocab = vocab
- 
-    @staticmethod
-    def clean_doc(doc, vocab):
+        self.vocab = Counter()
+        self.companies = ['nkla', 'nikola', 'msft', 'microsoft', 'aapl', 'apple', 
+                    'nflx', 'netflix', 'wday', 'workday', 'nvda', 'nvidia',
+                     'nlok', 'norton', 'xrx', 'xerox', 'hpq', 'hp', 'amd', 
+                     'amd', 'mrna', 'moderna', 'pton', 'peloton', 'hd', 
+                     'home depot']
+
+    def clean_train_data(self, title):
         # make doc lowercase
-        doc = doc.lower()
+        title = title.lower()
         
         # split into tokens by white space
-        tokens = doc.split()
+        tokens = title.split()
         
         # remove punctuation from each token
         table = str.maketrans('', '', punctuation)
         tokens = [w.translate(table) for w in tokens]
         
-        # filter out tokens not in vocab
-        tokens = [w for w in tokens if w in vocab]
-        tokens = ' '.join(tokens)
+        # remove remaining tokens that are not alphanumeric, stopwords, too short, or company names
+        tokens = [word for word in tokens if word.isalpha() 
+                        and word not in set(stopwords.words('english'))
+                        and len(word) > 1
+                        and word not in self.companies]
+
         return tokens
- 
-    # return a list of cleaned word vectors for all docs in a directory
+
+    def clean_test_data(self, title):
+        # make doc lowercase
+        title = title.lower()
+        
+        # split into tokens by white space
+        tokens = title.split()
+        
+        # remove punctuation from each token
+        table = str.maketrans('', '', punctuation)
+        tokens = [w.translate(table) for w in tokens]
+        
+        # remove remaining tokens that are not in vocab
+        tokens = [word for word in tokens if word in self.vocab]
+
+        return tokens
+
     @staticmethod
-    def process_docs(directory, vocab, is_trian):
-        documents = list()
+    def replace_label(row):
+        label_dict = {'negative' : 0, 'positive': 1}
+        return label_dict[row['label']]
+ 
+    def train_model(self, data_path):
+        # load data
+        data = pd.read_csv(data_path, encoding='latin-1', names=['label', 'title'])
         
-        # walk through all files in given directory
-        for filename in os.listdir(directory):
-            sent, num = re.match(r'([a-z]+)([0-9]+)', filename).groups()
-            num = int(num)
-            
-            # process either training docs or testing docs
-            if is_trian and ((sent == 'pos' and num >= 1263) or (sent == 'neg' and num >= 504)):
-                continue
-            if not is_trian and not ((sent == 'pos' and num >= 1263) or (sent == 'neg' and num >= 504)):
-                continue
-            
-            # add file to documents list
-            path = directory + '/' + filename
-            doc = DataLoader.load_doc(path)
-            tokens = SentimentTrainer.clean_doc(doc, vocab)
-            documents.append(tokens)
-        return documents
+        # replace word labels with numerical labels
+        data = data[data['label'] != 'neutral']
+        data['label'] = data.apply(self.replace_label, axis = 1)
+        
+        # split data into train and test sets
+        train, test = train_test_split(data, test_size=0.15, stratify = data['label'])
 
-    def train_model(self, pos_path, neg_path):
-        # load all training docs
-        positive_docs = self.process_docs(pos_path, self.vocab, True)
-        negative_docs = self.process_docs(neg_path, self.vocab, True)
-        
-        train_docs = negative_docs + positive_docs
-        
-        # fit the tokenizer on the documents
-        self.tokenizer.fit_on_texts(train_docs)
-        
-        # convert the words lists into sequence vectors
-        encoded_docs = self.tokenizer.texts_to_sequences(train_docs)
-        
-        # pad sequences
-        self.max_length = max([len(s.split()) for s in train_docs])
-        Xtrain = pad_sequences(encoded_docs, maxlen=self.max_length, padding='post')
-        
-        # define training labels
-        ytrain = np.array([0 for _ in range(504)] + [1 for _ in range(1263)])
+        # clean data and convert into array of words
+        train['title'] = train['title'].apply(self.clean_train_data)
+        test['title'] = test['title'].apply(self.clean_test_data)
 
-        #load all testing docs
-        positive_docs = self.process_docs(pos_path, self.vocab, False)
-        negative_docs = self.process_docs(neg_path, self.vocab, False)
-        
-        test_docs = negative_docs + positive_docs
-        
-        # convert the words lists into sequence vectors
-        encoded_docs = self.tokenizer.texts_to_sequences(test_docs)
-        
-        # pad sequences
-        Xtest = pad_sequences(encoded_docs, maxlen=self.max_length, padding='post')
-        
-        # define test labels
-        ytest = np.array([0 for _ in range(100)] + [1 for _ in range(100)])
+        # create vocab of all words in training set
+        train['title'].apply(lambda x: self.vocab.update(x))
+
+        # fit the tokenizer on the training data
+        self.tokenizer.fit_on_texts(train['title'])
+
+        # convert the word array into a sequence vector
+        train['sequences'] = self.tokenizer.texts_to_sequences(train['title'])
+        test['sequences'] = self.tokenizer.texts_to_sequences(test['title'])
+
+        # pad the vectors to fit the correct length
+        self.max_length = max([len(s) for s in train['sequences']])
+        xtrain = pad_sequences(train['sequences'], maxlen=self.max_length, padding='post')
+        xtest = pad_sequences(test['sequences'], maxlen=self.max_length, padding='post')
          
         # define vocabulary size
         vocab_size = len(self.tokenizer.word_index) + 1
@@ -111,10 +114,10 @@ class SentimentTrainer:
         self.model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy', 'Precision', 'Recall'])
         
         # fit model
-        self.model.fit(Xtrain, ytrain, batch_size = 512, epochs=10)
+        self.model.fit(xtrain, train['label'], batch_size = 512, epochs=10)
         
         # evaluate model
-        loss, acc, prec, rec = self.model.evaluate(Xtest, ytest)
+        loss, acc, prec, rec = self.model.evaluate(xtest, test['label'])
         f1 = (2 * prec * rec) / (prec + rec)
         print('Test Accuracy: %f' % (acc*100))
         print('Test Precision: %f' % (prec*100))
