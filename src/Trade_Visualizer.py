@@ -2,12 +2,15 @@ import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 from time import sleep
 from TwelveDataWrapper import TwelveDataWrapper as tdw
 from LSTMv2 import LSTMv2
 from datetime import datetime
 from pandas.tseries.offsets import BDay
 from pandas_datareader import data
+from requests.exceptions import ChunkedEncodingError
+from pandas.errors import ParserError
 
 class Trade_Visualizer:
     def __init__(self):
@@ -124,6 +127,71 @@ class Trade_Visualizer:
             plt.subplots_adjust(left=0.1, bottom=0.2, right=0.9, top=0.9)
             plt.savefig(self.visuals_path + key + '_buysell.png')
             plt.close()
+    
+    # Returns Tuple of three values: array of epochs, array of f1-scores,
+    # f1-score for 50 epochs, or None if Model couldn't be trained
+    # calculates average f1 score across three trainings
+    def create_epoch_data(self, ticker):
+        epochs = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75] 
+        f1_scores = []
+        for trial in epochs: 
+            try:
+                f1_score = 0
+                start = time.time()
+                for i in range(3):
+                    ls = LSTMv2(ticker)
+                    f1_score += ls.testModel(epochs=trial)
+                end = time.time()
+                if int(end - start) < 30:
+                    sleep(20)
+                if trial == 50:
+                    f1 = f1_score / 3
+                f1_scores.append(f1_score / 3)
+                print ('AVERAGE: ', f1_score / 3)
+            except KeyError:
+                return None
+            except ChunkedEncodingError:
+                return None
+            except ParserError:
+                return None
+        return (epochs, f1_scores, f1)
+  
+    # Creates a plot of f1_score vs epochs for a given ticker
+    def plot_epochs(self, epochs, f1_scores, ticker):
+        fig, ax = plt.subplots()
+        ax.plot(epochs, f1_scores, label='F1 Score')
+        ax.set_xlabel('Epochs')
+        ax.set_ylabel('F1 Score')
+        ax.set_title(ticker + " F1 Score vs Epochs")
+        plt.savefig(self.visuals_path + '/epochs/' + ticker) 
+        plt.close()
+        
+    # Creates a bar chart representing the f1 scores for every company 
+    def plot_all_f1s(self, valid_keys, valid_f1s): 
+        fig, ax = plt.subplots()
+        ax.bar(valid_keys, valid_f1s, label='F1')
+        ax.set_xlabel('Company')
+        ax.set_ylabel('F1 Score')
+        ax.set_title("Company F1 Scores")
+        plt.savefig(self.visuals_path + 'company_f1s') 
+        plt.close()
+
+    # Creates epoch vs f1 plots for each company and saves them to the visualization 
+    # directory with the name /epochs/<ticker>
+    def plot_f1(self):
+        valid_keys = []
+        valid_f1s = []
+
+        for key in self.trade_history.keys():
+            epoch_data = self.create_epoch_data(key)
+            if epoch_data is None:
+                continue
+            epochs, f1_scores, f1 = epoch_data
+            self.plot_epochs(epochs, f1_scores, key)
+            valid_keys.append(key)
+            valid_f1s.append(f1)
+            print(valid_keys)
+        self.plot_all_f1s(valid_keys, valid_f1s)
             
     # Reads the json file located at the given path and returns
     # a dictionary with company key as the ticker and a list of

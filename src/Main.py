@@ -16,7 +16,7 @@ def median(arrs):
     return arrs.iloc[size // 2]
 
 def main():
-    train_model = False
+    train_model = True
 
     scrapes_per_article = 10
 
@@ -40,9 +40,6 @@ def main():
     }
     """
 
-
-    #tickers = {'NFLX': 'Netflix'}
-
     df = pd.DataFrame(columns=['Date', 'Ticker', 'Headline'])
 
     for key in tickers:
@@ -56,8 +53,6 @@ def main():
         'Headline': ts.getTitleList()})
         df = df.append(frame, ignore_index=True)
 
-    # print(df)
-    print(os.path.abspath(training_data_dir))
     dl = DataLoader()
     dl.load_vocab(training_data_dir + 'pos', training_data_dir + 'neg')
 
@@ -79,7 +74,7 @@ def main():
         elif result < 0:
             trader.sell(ticker, int(abs(result) * 100))
         else:
-            print("No chang was predicted")
+            print("No change was predicted")
 
 if __name__ == "__main__":
     main()
