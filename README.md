@@ -12,6 +12,7 @@ Source files found in src/
 Source files found in src/
 * LSTMv2.py
 * trainModel.py
+
 Old/Previous attempt source files found in src/
 * quant_trainer.py
 * LSTM.py
