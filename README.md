@@ -10,19 +10,23 @@ Source files found in src/
 
 ### Quantitative Analysis LSTM
 Source files found in src/
-* LSTM.py
 * LSTMv2.py
+* trainModel.py
+Old/Previous attempt source files found in src/
 * quant_trainer.py
+* LSTM.py
 
 ### Quantitative Vizualization
 Source files found in src/
 * Trade_Visualizer.py
 
 Data found in data/
-* epochsVsF1.csv
+* trade_history.json
 
 Visuals found in visuals/
 * ticker_buysell.png
+* ticker_prediction.png
+* epochs/ticker.png
 
 ## -------Sentiment Analysis-------
 ### Webscraping
