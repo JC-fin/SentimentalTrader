@@ -1,1 +1,0 @@
-- Provides summary of the medical equipment pipeline products that the company is developing .

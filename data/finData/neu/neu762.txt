@@ -1,1 +1,0 @@
-When new types of network elements are added to the network , the conversion file is updated by adding the information required for converting the message format of the new network element type to the format understood by the management system .

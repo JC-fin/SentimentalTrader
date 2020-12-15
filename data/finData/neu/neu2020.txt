@@ -1,1 +1,0 @@
-The use of validation rule base enables verifying that processing rule bases managed by different administrators fulfil some set requirements .

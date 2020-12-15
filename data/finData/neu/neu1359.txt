@@ -1,1 +1,0 @@
-The Remote Radio head module will be available at 4W power for 2.5 GHz and 3.5 GHz TDD frequency bands .

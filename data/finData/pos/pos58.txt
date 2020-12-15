@@ -1,1 +1,0 @@
-The contract covers HDO platform , AC800 and CXE880 optical Fttb nodes designed to increase the forward and return path capacity of the transmission networks .

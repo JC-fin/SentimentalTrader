@@ -1,1 +1,0 @@
-The secondary antenna can also be used for reception of the high power signal of the radar to calibrate the transmission channels of the radar . ''

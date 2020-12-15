@@ -1,1 +1,0 @@
-A worm set to activate Friday will corrupt documents using the most common file types , including '' .
