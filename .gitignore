@@ -131,4 +131,5 @@ dmypy.json
 #sentiment dataset
 
 /data/finData
- 
+vocab.txt 
+.vscode/
