@@ -23,10 +23,10 @@ The Google News API is used to search and collect headlines for all of the compa
 #### Sentiment Analysis CNN
 The model is a Convolutional Neural Network (CNN) with an initial embedding layer followed by a single convolutional layer, which is then pooled and flattened for the two dense layers, the first using a rectified linear activation function and the final layer using a sigmoid. The model was trained using a data set of 1,967 financial headlines with labeled positive or negative sentiment. When evaluated, the model achieved an F1 score of 0.87 for positive articles.
 
-Given headlines that imply a positive outlook for a company, the model should output a prediction greater than 0.5:
-- Input: "Apple Is Reportedly Working on Custom Silicon for Apple Car" Output: 0.9657801.
-- Input: "Tesla Beats on Profit, Reaffirms Goal of 500,000 Deliveries" Output: 0.98735297.
-
-Likewise, headlines that imply a negative outlook should receive predictions less than 0.5:
-- Input: "Struggling Nikola Stock Still Has Further to Fall"  Output: 0.06987518
-- Input: "Purdue Pharma to Plead Guilty, Pay $8.3 Billion Over Opiods" Output: 0.114830494
+Given headlines that imply a positive outlook for a company, the model should output a prediction greater than 0.5. Likewise, headlines that imply a negative outlook should receive predictions less than 0.5:
+| Input | Output|
+| --- | --- |
+| "Apple Is Reportedly Working on Custom Silicon for Apple Car" | 0.96578010 |
+| "Tesla Beats on Profit, Reaffirms Goal of 500,000 Deliveries" | 0.98735297 |
+| "Struggling Nikola Stock Still Has Further to Fall" | 0.06987518 |
+| "Purdue Pharma to Plead Guilty, Pay $8.3 Billion Over Opiods" | 0.114830494 |
