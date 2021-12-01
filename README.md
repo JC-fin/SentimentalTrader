@@ -1,3 +1,6 @@
+## UPDATE 
+The purpose of forking this project is to apply the model used in this stock sentiment trading bot to a crypto shitcoin model. We will hope to use data from Reddit, Twitter, Discord, and other resources to replicate what was made in this bot.
+
 # SentimentalTrader
 Data 301 Quarter-long Project: A trading bot combining sentiment analysis on web-scraped articles and quantitative analysis of stock trends in order to enact stock trades.
 
